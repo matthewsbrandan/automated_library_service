@@ -2,7 +2,7 @@
     <div class="container py-2">
         <nav aria-label="breadcrumb">
             <div class="d-flex align-items-center">
-                <span class="px-3 font-weight-bold text-lg text-white me-4">Corporate UI</span>
+                <span class="px-3 font-weight-bold text-lg text-white me-4">{{ Config::get('app.name') }}</span>
             </div>
         </nav>
         <ul class="navbar-nav d-none d-lg-flex">
