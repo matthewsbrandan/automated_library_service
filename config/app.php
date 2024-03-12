@@ -21,6 +21,7 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'support_name' => env('SUPPORT_PHONE', ''),
     /*
     |--------------------------------------------------------------------------
     | Application Environment

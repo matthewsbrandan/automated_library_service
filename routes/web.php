@@ -19,71 +19,62 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 |
 */
 
-Route::get('/', function () {
+Route::middleware('auth')->group(function () {
+  Route::get('/', function () {
     return redirect('/dashboard');
-})->middleware('auth');
+  });
 
-Route::get('/dashboard', function () {
+  Route::get('/dashboard', function () {
     return view('dashboard');
-})->name('dashboard')->middleware('auth');
-
-Route::get('/tables', function () {
+  })->name('dashboard');
+  
+  Route::get('/tables', function () {
     return view('tables');
-})->name('tables')->middleware('auth');
-
-Route::get('/wallet', function () {
+  })->name('tables');
+  
+  Route::get('/wallet', function () {
     return view('wallet');
-})->name('wallet')->middleware('auth');
+  })->name('wallet');
 
-Route::get('/RTL', function () {
+  Route::get('/RTL', function () {
     return view('RTL');
-})->name('RTL')->middleware('auth');
-
-Route::get('/profile', function () {
+  })->name('RTL');
+  
+  Route::get('/profile', function () {
     return view('account-pages.profile');
-})->name('profile')->middleware('auth');
+  })->name('profile');
 
-Route::get('/signin', function () {
+  Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
+
+  Route::get('/laravel-examples/user-profile', [ProfileController::class, 'index'])->name('users.profile');
+
+  Route::put('/laravel-examples/user-profile/update', [ProfileController::class, 'update'])->name('users.update');
+
+  Route::get('/laravel-examples/users-management', [UserController::class, 'index'])->name('users-management');
+});
+
+Route::middleware('guest')->group(function () {
+  Route::get('/signin', function () {
     return view('account-pages.signin');
-})->name('signin');
-
-Route::get('/signup', function () {
+  })->name('signin');
+  
+  Route::get('/signup', function () {
     return view('account-pages.signup');
-})->name('signup')->middleware('guest');
+  })->name('signup');
+  
+  Route::get('/sign-up', [RegisterController::class, 'create'])->name('sign-up');
+  
+  Route::post('/sign-up', [RegisterController::class, 'store']);
+  
+  Route::get('/sign-in', [LoginController::class, 'create'])->name('sign-in');
 
-Route::get('/sign-up', [RegisterController::class, 'create'])
-    ->middleware('guest')
-    ->name('sign-up');
+  Route::post('/sign-in', [LoginController::class, 'store']);
 
-Route::post('/sign-up', [RegisterController::class, 'store'])
-    ->middleware('guest');
+  Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])->name('password.request');
 
-Route::get('/sign-in', [LoginController::class, 'create'])
-    ->middleware('guest')
-    ->name('sign-in');
+  Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email');
 
-Route::post('/sign-in', [LoginController::class, 'store'])
-    ->middleware('guest');
+  Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])->name('password.reset');
 
-Route::post('/logout', [LoginController::class, 'destroy'])
-    ->middleware('auth')
-    ->name('logout');
-
-Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])
-    ->middleware('guest')
-    ->name('password.request');
-
-Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])
-    ->middleware('guest')
-    ->name('password.email');
-
-Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])
-    ->middleware('guest')
-    ->name('password.reset');
-
-Route::post('/reset-password', [ResetPasswordController::class, 'store'])
-    ->middleware('guest');
-
-Route::get('/laravel-examples/user-profile', [ProfileController::class, 'index'])->name('users.profile')->middleware('auth');
-Route::put('/laravel-examples/user-profile/update', [ProfileController::class, 'update'])->name('users.update')->middleware('auth');
-Route::get('/laravel-examples/users-management', [UserController::class, 'index'])->name('users-management')->middleware('auth');
+  Route::post('/reset-password', [ResetPasswordController::class, 'store']);
+});

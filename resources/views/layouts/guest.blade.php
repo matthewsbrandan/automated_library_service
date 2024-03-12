@@ -20,6 +20,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     @if (config('app.is_demo'))
         <title itemprop="name">
+            
             Corporate UI Dashboard Laravel by Creative Tim & UPDIVISION
         </title>
         <meta name="twitter:card" content="summary" />
@@ -51,9 +52,7 @@
     @endif
     <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
-    <title>
-        Corporate UI by Creative Tim & UPDIVISION
-    </title>
+    <title>{{ Config::get('app.name') }}</title>
     <!--     Fonts and icons     -->
     <link
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Noto+Sans:300,400,500,600,700,800|PT+Mono:300,400,500,600,700"
@@ -69,7 +68,6 @@
 </head>
 
 <body class="">
-
     {{ $slot }}
     <!--   Core JS Files   -->
     <script src="../assets/js/core/popper.min.js"></script>
