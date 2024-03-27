@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
@@ -21,12 +22,10 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 
 Route::middleware('auth')->group(function () {
   Route::get('/', function () {
-    return redirect('/dashboard');
+    return redirect('/home');
   });
 
-  Route::get('/dashboard', function () {
-    return view('dashboard');
-  })->name('dashboard');
+  Route::get('/home', [DashboardController::class, 'index'])->name('dashboard');
   
   Route::get('/tables', function () {
     return view('tables');
