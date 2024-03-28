@@ -9,7 +9,7 @@ class Book extends Model
 {
   use HasFactory;
   protected $fillable = [
-    'isbn',
+    'isbn', // https://www.googleapis.com/books/v1/volumes?q=isbn:<isbn-aqui>
     'title', // items[0].volumeInfo.title
     'subtitle', // items[0].volumeInfo.subtitle
     // 'authors' // items[0].volumeInfo.authors

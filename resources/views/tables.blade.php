@@ -14,9 +14,11 @@
                   <p class="text-sm">Acervo de livros da biblioteca</p>
                 </div>
                 <div class="ms-auto d-flex">
-                  <button type="button" class="btn btn-sm btn-white me-2">
-                    Adicionar Livro
-                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-white me-2"
+                    data-bs-toggle="modal" data-bs-target="#modalAddBook"
+                  >Adicionar Livro</button>
                   <button type="button"
                     class="btn btn-sm btn-dark btn-icon d-flex align-items-center me-2">
                     <span class="btn-inner--icon">
@@ -153,5 +155,5 @@
       <x-app.footer />
     </div>
   </main>
-
+  <x-modals.modal-add-book/>
 </x-app-layout>
