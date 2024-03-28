@@ -8,12 +8,12 @@
         <ul class="navbar-nav d-none d-lg-flex">
             <li class="nav-item px-3 py-3 border-radius-sm  d-flex align-items-center">
                 <a href="{{ route('dashboard') }}" class="nav-link text-white p-0">
-                    Dashboard
+                    Home
                 </a>
             </li>
             <li class="nav-item px-3 py-3 border-radius-sm  d-flex align-items-center">
-                <a href="{{ route('tables') }}" class="nav-link text-white p-0">
-                    Tables
+                <a href="{{ route('manage.book.index') }}" class="nav-link text-white p-0">
+                    Livros
                 </a>
             </li>
             <li class="nav-item px-3 py-3 border-radius-sm bg-slate-800 d-flex align-items-center">

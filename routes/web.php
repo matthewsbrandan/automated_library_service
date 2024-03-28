@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ManageBookController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
@@ -27,9 +28,10 @@ Route::middleware('auth')->group(function () {
 
   Route::get('/home', [DashboardController::class, 'index'])->name('dashboard');
   
-  Route::get('/tables', function () {
-    return view('tables');
-  })->name('tables');
+  Route::name('manage.')->group(function (){
+    Route::get('/gerenciar/livros', [ManageBookController::class, 'index'])->name('book.index');
+    Route::post('/gerenciar/livros', [ManageBookController::class, 'store'])->name('book.store');
+  });
   
   Route::get('/wallet', function () {
     return view('wallet');
