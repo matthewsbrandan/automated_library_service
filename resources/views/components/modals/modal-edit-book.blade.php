@@ -1,3 +1,8 @@
+  <!-- Button trigger modal -->
+  <button type="button" class="btn bg-gradient-info btn-block" >
+    SignUp Modal
+  </button>
+
 <!-- Modal -->
 <div class="modal fade" id="modalAddBook" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">

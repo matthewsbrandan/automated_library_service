@@ -22,4 +22,20 @@ class Book extends Model
     'reserved',
     'borrowed'
   ];
+
+  public function authors(){
+    return $this->belongsToMany(Author::class, 'book_authors', 'book_id', 'author_id');
+  }
+
+  public function getAuthorNames(){
+    if(isset($this->authors)) return $this->authors->map(function($author){ return $author->name; });
+    return [];
+  }
+  public function getStockResume(){
+    return [
+      (object)['name' => 'Disponível', 'amount' => $this->available,'percent' => ($this->available * 100) / $this->stock, 'theme' => 'success'],
+      (object)['name' => 'Reservados', 'amount' => $this->reserved, 'percent' => ($this->reserved * 100)  / $this->stock, 'theme' => 'warning'],
+      (object)['name' => 'Emprestado', 'amount' => $this->borrowed, 'percent' => ($this->borrowed * 100)  / $this->stock, 'theme' => 'dark'   ]
+    ];
+  }
 }

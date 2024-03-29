@@ -13,9 +13,13 @@ use Illuminate\Support\Facades\Auth;
 
 class ManageBookController extends Controller{
   public function index(){
-    return view('tables');
+    $books = Book::orderBy('updated_at','desc')
+      ->take(10)
+      ->get();
+
+    return view('tables', ['books' => $books]);
   }
-  public function store(Request $request) : RedirectResponse{
+  public function store(Request $request) {
     $validated = $request->validate([
       'title'          => 'required|max:255',
       'subtitle'       => 'max:255',
@@ -38,12 +42,15 @@ class ManageBookController extends Controller{
       'categories'     => $request->categories,
       'image'          => $request->image,
       'stock'          => $request->stock,
+      'available'      => $request->stock,
+      'reserved'       => 0,
+      'borrowed'       => 0
     ]);
     
     if(count($request->authors) > 0) $this->linkBookAndAuthor($book->id, $request->authors);
     if(count($request->categories) > 0) $this->linkBookAndCategories($book->id, $request->categories);
 
-    return redirect('manage.book.index')->with('message', 'Livro criado com sucesso');
+    return redirect()->route('manage.book.index')->with('message', 'Livro criado com sucesso');
   }
 
   private function linkBookAndAuthor($book_id, $authors){
@@ -55,7 +62,7 @@ class ManageBookController extends Controller{
       ]);
 
       BookAuthor::create([
-        'book_id'   => $book->id,
+        'book_id'   => $book_id,
         'author_id' => $findedAuthor->id
       ]);
     }
@@ -69,7 +76,7 @@ class ManageBookController extends Controller{
       ]);
 
       BookCategory::create([
-        'book_id'   => $book->id,
+        'book_id'   => $book_id,
         'category_id' => $findedCategory->id
       ]);
     }
