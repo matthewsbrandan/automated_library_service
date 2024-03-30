@@ -71,7 +71,17 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @foreach ($books as $book)  
+                    @if($books->count() === 0)
+                      <tr>
+                        <td colspan="4">
+                          <div
+                            class="d-flex align-items-center justify-content-center font-weight-semibold text-center text-secondary bg-gray-100 opacity-7 text-xs"
+                            style="width: 100%; min-height: 10rem;"
+                          >Não há nenhum livro cadastrado!</div>
+                        </td>
+                      </tr>
+                    @endif
+                    @foreach ($books as $book)
                       <tr>
                         <td>
                           <div class="d-flex px-2 py-1">
@@ -133,29 +143,20 @@
                 </table>
               </div>
               <div class="border-top py-3 px-3 d-flex align-items-center">
-                <button class="btn btn-sm btn-white d-sm-block d-none mb-0">Anterior</button>
+                <button class="btn btn-sm btn-white d-sm-block d-none mb-0" disabled="false">Anterior</button>
                 <nav aria-label="..." class="ms-auto">
                   <ul class="pagination pagination-light mb-0">
-                    <li class="page-item active" aria-current="page">
-                      <span class="page-link font-weight-bold">1</span>
-                    </li>
-                    <li class="page-item"><a class="page-link border-0 font-weight-bold"
-                        href="javascript:;">2</a></li>
-                    <li class="page-item"><a
-                        class="page-link border-0 font-weight-bold d-sm-inline-flex d-none"
-                        href="javascript:;">3</a></li>
-                    <li class="page-item"><a class="page-link border-0 font-weight-bold"
-                        href="javascript:;">...</a></li>
-                    <li class="page-item"><a
-                        class="page-link border-0 font-weight-bold d-sm-inline-flex d-none"
-                        href="javascript:;">8</a></li>
-                    <li class="page-item"><a class="page-link border-0 font-weight-bold"
-                        href="javascript:;">9</a></li>
-                    <li class="page-item"><a class="page-link border-0 font-weight-bold"
-                        href="javascript:;">10</a></li>
+                    @for($i = 1; $i <= $pagination->pages; $i++)
+                      <li class="page-item {{ $i === 1 ? 'active' : '' }}" aria-current="{{ $i === 1 ? 'page' : '' }}">
+                        <a class="page-link {{ $i === 1 ? '' : 'border-0' }} font-weight-bold" href="javascript:;">{{ $i }}</a>
+                      </li>
+                    @endfor
                   </ul>
                 </nav>
-                <button class="btn btn-sm btn-white d-sm-block d-none mb-0 ms-auto">Próximo</button>
+                <button
+                  class="btn btn-sm btn-white d-sm-block d-none mb-0 ms-auto"
+                  disabled="{{ $pagination->pages === 1 ? "true": "false" }}"
+                >Próximo</button>
               </div>
             </div>
           </div>

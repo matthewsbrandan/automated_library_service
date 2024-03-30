@@ -13,11 +13,16 @@ use Illuminate\Support\Facades\Auth;
 
 class ManageBookController extends Controller{
   public function index(){
+    $pagination = (object)['total' => 0, 'per_page' => 10, 'pages' => 1];
+
+    $pagination->total = Book::count();
+    $pagination->pages = ceil($pagination->total / $pagination->per_page);
+
     $books = Book::orderBy('updated_at','desc')
-      ->take(10)
+      ->take($pagination->per_page)
       ->get();
 
-    return view('tables', ['books' => $books]);
+    return view('tables', ['books' => $books, 'pagination' => $pagination]);
   }
   public function store(Request $request) {
     $validated = $request->validate([
