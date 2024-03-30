@@ -114,8 +114,11 @@
                           <span class="text-secondary text-sm font-weight-normal">{{ $book->published_date }}</span>
                         </td>
                         <td class="align-middle">
-                          <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
-                            data-bs-toggle="tooltip" data-bs-title="Editar Livro">
+                          <a
+                            href="javascript:;" class="text-secondary font-weight-bold text-xs"
+                            data-bs-toggle="tooltip" data-bs-title="Editar Livro"
+                            onClick="handleOpenEditBook({{ $book->id }})"
+                          >
                             <svg width="14" height="14" viewBox="0 0 15 16"
                               fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path
@@ -162,4 +165,8 @@
     </div>
   </main>
   <x-modals.modal-add-book/>
+  <script>
+    const books = {!! $books->toJson() !!};
+  </script>
+  <x-modals.modal-edit-book/>
 </x-app-layout>

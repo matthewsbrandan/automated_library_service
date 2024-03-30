@@ -31,6 +31,8 @@ Route::middleware('auth')->group(function () {
   Route::name('manage.')->group(function (){
     Route::get('/gerenciar/livros', [ManageBookController::class, 'index'])->name('book.index');
     Route::post('/gerenciar/livros', [ManageBookController::class, 'store'])->name('book.store');
+    Route::put('/gerenciar/livros/{id}', [ManageBookController::class, 'update'])->name('book.update');
+    Route::delete('/gerenciar/livros/{id}', [ManageBookController::class, 'delete'])->name('book.delete');
   });
   
   Route::get('/wallet', function () {

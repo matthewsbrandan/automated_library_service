@@ -22,14 +22,14 @@ class ManageBookController extends Controller{
   public function store(Request $request) {
     $validated = $request->validate([
       'title'          => 'required|max:255',
-      'subtitle'       => 'max:255',
-      'isbn'           => 'max:255',
-      'published_date' => 'max:4',
+      'subtitle'       => 'required|max:255',
+      'isbn'           => 'required|max:255',
+      'published_date' => 'required|max:4',
       'description'    => 'required',
       'authors'        => 'array',
       'categories'     => 'array',
       'image'          => 'max:255',
-      'stock'          => 'integer',
+      'stock'          => 'required|integer',
     ]);
 
     $book = Book::create([
@@ -52,7 +52,58 @@ class ManageBookController extends Controller{
 
     return redirect()->route('manage.book.index')->with('message', 'Livro criado com sucesso');
   }
+  public function update(Request $request, $id) {
+    $book = Book::whereId($id)->first();
+    if(!$book) return redirect()->route('manage.book.index')->with('message', 'Livro não encontrado');
 
+    $validated = $request->validate([
+      'title'          => 'required|max:255',
+      'subtitle'       => 'required|max:255',
+      'isbn'           => 'required|max:255',
+      'published_date' => 'required|max:4',
+      'description'    => 'required',
+      'authors'        => 'array',
+      'categories'     => 'array',
+      'image'          => 'max:255',
+      'stock'          => 'required|integer',
+      'available'      => 'required|integer',
+      'reserved'       => 'required|integer',
+      'borrowed'       => 'required|integer'
+    ]);
+
+    $this->deleteRelationships($id);
+
+    if(count($request->authors) > 0) $this->linkBookAndAuthor($book->id, $request->authors);
+    if(count($request->categories) > 0) $this->linkBookAndCategories($book->id, $request->categories);
+
+    $book->update([
+      'title'          => $request->title,
+      'subtitle'       => $request->subtitle,
+      'isbn'           => $request->isbn,
+      'published_date' => $request->published_date,
+      'description'    => $request->description,
+      'authors'        => $request->authors,
+      'categories'     => $request->categories,
+      'image'          => $request->image,
+      'stock'          => $request->stock,
+      'available'      => $request->stock,
+      'reserved'       => $request->reserved,
+      'borrowed'       => $request->borrowed
+    ]);
+
+    return redirect()->route('manage.book.index')->with('message', 'Livro atualizado com sucesso');
+  }
+  public function delete($id){
+    $book = Book::whereId($id)->first();
+    if(!$book) return redirect()->route('manage.book.index')->with('message', 'Livro não encontrado');
+
+    $this->deleteRelationships($id);
+    Book::whereId($id)->delete();
+
+    return redirect()->route('manage.book.index')->with('message', 'Livro excluído com sucesso');
+  }
+
+  #region LOCAL FUNCTIONS
   private function linkBookAndAuthor($book_id, $authors){
     foreach($authors as $author){
       $findedAuthor = Author::whereName($author)->first();
@@ -81,4 +132,9 @@ class ManageBookController extends Controller{
       ]);
     }
   }
+  private function deleteRelationships($book_id){
+    BookAuthor::whereBookId($book_id)->delete();
+    BookCategory::whereBookId($book_id)->delete();
+  }
+  #endregion LOCAL FUNCTIONS
 }

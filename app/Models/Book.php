@@ -26,9 +26,16 @@ class Book extends Model
   public function authors(){
     return $this->belongsToMany(Author::class, 'book_authors', 'book_id', 'author_id');
   }
+  public function categories(){
+    return $this->belongsToMany(Category::class, 'book_categories', 'book_id', 'category_id');
+  }
 
   public function getAuthorNames(){
     if(isset($this->authors)) return $this->authors->map(function($author){ return $author->name; });
+    return [];
+  }
+  public function getCategoryNames(){
+    if(isset($this->categories)) return $this->categories->map(function($category){ return $category->name; });
     return [];
   }
   public function getStockResume(){

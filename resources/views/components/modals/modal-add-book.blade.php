@@ -40,7 +40,12 @@
                 @endforeach
               </div>
               <div class="text-center">
-                <button type="submit" class="btn btn-dark btn-lg btn-rounded w-100 mt-4 mb-2">Cadastrar</button>
+                <button type="submit" class="btn btn-dark btn-lg btn-rounded w-100 mt-4">Cadastrar</button>
+                <button
+                  type="button"
+                  class="btn btn-light btn-lg btn-rounded w-100 mb-2"
+                  data-bs-dismiss="modal"
+                >Cancelar</button>
               </div>
             </form>
           </div>
