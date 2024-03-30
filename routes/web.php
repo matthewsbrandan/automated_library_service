@@ -26,13 +26,33 @@ Route::middleware('auth')->group(function () {
     return redirect('/home');
   });
 
+  /** 
+    [ ] HOME VERSÃO ADMIN
+      - Deve ter o gráfico "Balances over time" com reservas + coletas
+      - Deve ter a tabela "Recent transactions" contendo as solicitações de coleta próximas, e as devoluções próximas e/ou vencidas
+      - Deve ter os quatro cards contendo as informações "Total de reservas pendentes" | "Reservas Vencidas" | "Livros emprestados" | "Devoluções em atraso"
+      - O o acordion e o último gráfico "Overview balance" devem ser removido
+  */ 
   Route::get('/home', [DashboardController::class, 'index'])->name('dashboard');
   
   Route::name('manage.')->group(function (){
-    Route::get('/gerenciar/livros', [ManageBookController::class, 'index'])->name('book.index');
-    Route::post('/gerenciar/livros', [ManageBookController::class, 'store'])->name('book.store');
-    Route::put('/gerenciar/livros/{id}', [ManageBookController::class, 'update'])->name('book.update');
-    Route::delete('/gerenciar/livros/{id}', [ManageBookController::class, 'delete'])->name('book.delete');
+    Route::name('book.')->group(function (){
+      Route::get('/gerenciar/livros', [ManageBookController::class, 'index'])->name('index');
+      // [ ] [GET | JSON] pagination
+      Route::post('/gerenciar/livros', [ManageBookController::class, 'store'])->name('store');
+      Route::put('/gerenciar/livros/{id}', [ManageBookController::class, 'update'])->name('update');
+      Route::delete('/gerenciar/livros/{id}', [ManageBookController::class, 'delete'])->name('delete');
+    });
+
+    Route::name('reservation.')->group(function (){
+      // [ ] [GET] index
+      // [ ] [PUT | JSON] done
+      // [ ] [PUT | JSON] denied
+    });
+
+    Route::name('devolution.')->group(function (){
+      // 
+    });
   });
   
   Route::get('/wallet', function () {
