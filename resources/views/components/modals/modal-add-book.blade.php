@@ -15,34 +15,38 @@
           </div>
           <div class="card-body pb-3">
             <form role="form text-left">
-              <label>Name</label>
+              <label>ISBN</label>
               <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Name" aria-label="Name" aria-describedby="name-addon">
+                <input type="text" class="form-control" placeholder="isbn" aria-label="isbn" aria-describedby="isbn-addon">
               </div>
-              <label>Email</label>
+              <label>Título</label>
               <div class="input-group mb-3">
-                <input type="email" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="email-addon">
+                <input type="title" class="form-control" placeholder="título" aria-label="title" aria-describedby="title-addon">
               </div>
-              <label>Password</label>
+              <label>Subtítulo</label>
               <div class="input-group mb-3">
-                <input type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="password-addon">
+                <input type="subtitle" class="form-control" placeholder="subtítulo" aria-label="subtitle" aria-describedby="subtitle-addon">
               </div>
-              <div class="form-check form-check-info text-left">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked="">
-                <label class="form-check-label" for="flexCheckDefault">
-                  I agree the <a href="javascrpt:;" class="text-dark font-weight-bolder">Terms and Conditions</a>
-                </label>
+              <label>Autores</label>
+              <div class="input-group mb-3">
+                <input type="authors" class="form-control" placeholder="autores" aria-label="authors" aria-describedby="authors-addon">
+              </div>
+              <label>Data de publicação</label>
+              <div class="input-group mb-3">
+                <input type="published_date" class="form-control" placeholder="data" aria-label="published_date" aria-describedby="published_date-addon">
+              </div>
+              <label>Descrição</label>
+              <div class="input-group mb-3">
+                <input type="description" class="form-control" placeholder="descrição" aria-label="description" aria-describedby="description-addon">
+              </div>
+              <label>Categorias</label>
+              <div class="input-group mb-3">
+                <input type="categories" class="form-control" placeholder="categorias" aria-label="categories" aria-describedby="categories-addon">
               </div>
               <div class="text-center">
-                <button type="button" class="btn btn-dark btn-lg btn-rounded w-100 mt-4 mb-0">Sign up</button>
+                <button type="button" class="btn btn-dark btn-lg btn-rounded w-100 mt-4 mb-0">Cadastrar</button>
               </div>
             </form>
-          </div>
-          <div class="card-footer text-center pt-0 px-sm-4 px-1">
-            <p class="mb-4 mx-auto">
-              Already have an account?
-              <a href="javascrpt:;" class="text-dark font-weight-bold">Sign in</a>
-            </p>
           </div>
         </div>
       </div>
