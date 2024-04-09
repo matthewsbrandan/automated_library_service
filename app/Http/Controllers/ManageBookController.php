@@ -9,7 +9,6 @@ use App\Models\BookAuthor;
 use App\Models\BookCategory;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ManageBookController extends Controller{
   public function index(){
@@ -22,7 +21,7 @@ class ManageBookController extends Controller{
       ->take($pagination->per_page)
       ->get();
 
-    return view('tables', ['books' => $books, 'pagination' => $pagination]);
+    return view('manage.book.index', ['books' => $books, 'pagination' => $pagination]);
   }
   public function store(Request $request) {
     $validated = $request->validate([

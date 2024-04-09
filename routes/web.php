@@ -5,6 +5,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ManageBookController;
+use App\Http\Controllers\ManageReservationController;
+use App\Http\Controllers\ManageDevolutionController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
@@ -45,13 +47,13 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::name('reservation.')->group(function (){
-      // [ ] [GET] index
+      Route::get('/gerenciar/reservas', [ManageReservationController::class, 'index'])->name('index');
       // [ ] [PUT | JSON] done
       // [ ] [PUT | JSON] denied
     });
 
     Route::name('devolution.')->group(function (){
-      // 
+      Route::get('/gerenciar/devolucoes', [ManageDevolutionController::class, 'index'])->name('index');
     });
   });
   
