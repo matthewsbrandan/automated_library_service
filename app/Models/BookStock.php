@@ -10,7 +10,10 @@ class BookStock extends Model
   use HasFactory;
 
   protected $fillable = [
-    'rf_id', 'book_id'
+    'rf_id',
+    'book_id',
+    'transfer_id',
+    'status' // 'reserved', 'borrowed', 'available'
   ];
 
   public function book(){

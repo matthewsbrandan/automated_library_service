@@ -1,5 +1,4 @@
 <x-app-layout>
-
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <x-app.navbar />
     <div class="container-fluid py-4 px-5">
@@ -19,7 +18,7 @@
                     class="btn btn-sm btn-white me-2"
                     data-bs-toggle="modal" data-bs-target="#modalAddBook"
                   >Adicionar Livro</button>
-                  <button type="button"
+                  {{-- <button type="button"
                     class="btn btn-sm btn-dark btn-icon d-flex align-items-center me-2">
                     <span class="btn-inner--icon">
                         <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"
@@ -30,7 +29,7 @@
                         </svg>
                       </span>
                     <span class="btn-inner--text">Importar Livros</span>
-                  </button>
+                  </button> --}}
                 </div>
               </div>
             </div>

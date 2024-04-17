@@ -15,6 +15,11 @@ class Transfer extends Model
     'user_id',
     'expiration',
     'renewals',
-    'finished'
+    'finished',
+    'rf_id'
   ];
+
+  public function book(){
+    return $this->belongsTo(Book::class, 'book_id');
+  }
 }

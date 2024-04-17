@@ -81,7 +81,6 @@
                       aria-label="RF-ID"
                       id="field-rf-id"
                       v-model="curr_rf_id"
-                      required
                     />
                     <button
                       type="button"
@@ -104,6 +103,7 @@
                       </button>
                     </li>
                   </ul>
+                  <input type="hidden" name="rf_ids" v-bind:value="JSON.stringify(rf_ids ?? [])"/>
                 </div>
               </div>
               <div class="text-center">
@@ -124,7 +124,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
   @php } @endphp  
   <script>
-    function completeWithISBN(){
+    function completeWithISBN(){      
       const isbn = document.getElementById('field-isbn').value;
 
       if(!isbn){

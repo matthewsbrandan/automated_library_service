@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Author;
 use App\Models\Category;
 use App\Models\BookAuthor;
+use App\Models\BookStock;
 use App\Models\BookCategory;
 
 use Illuminate\Http\Request;
@@ -28,13 +29,23 @@ class ManageBookController extends Controller{
       'title'          => 'required|max:255',
       'subtitle'       => 'max:255',
       'isbn'           => 'required|max:255',
-      'published_date' => 'required|max:4',
+      'published_date' => 'required',
       'description'    => 'required',
       'authors'        => 'max:255',
       'categories'     => 'max:255',
       'image'          => 'max:255',
-      'stock'          => 'required|integer',
+      'rf_ids'         => 'required',
     ]);
+
+    $rf_ids = json_decode($request->rf_ids);
+
+    $stock = count($rf_ids);
+    
+    if($stock === 0) return $this->notify(
+      redirect()->back(),
+      'Adicione o rf-id de pelo menos 1 livro',
+      'danger'
+    );
 
     $book = Book::create([
       'title'          => $request->title,
@@ -43,14 +54,21 @@ class ManageBookController extends Controller{
       'published_date' => $request->published_date,
       'description'    => $request->description,
       'image'          => $request->image,
-      'stock'          => $request->stock,
-      'available'      => $request->stock,
+      'stock'          => $stock,
+      'available'      => $stock,
       'reserved'       => 0,
       'borrowed'       => 0
     ]);
 
+    $stockResponse = $this->linkBookAndStock($book->id, $rf_ids);
+    if(!$stockResponse->result) return $this->notify(
+      redirect()->back(),
+      $stockResponse->response,
+      'danger'
+    );
+
     $authors = explode(',', $request->authors);
-    $categories = count($request->categories);
+    $categories = explode(',', $request->categories);
     if(count($authors) > 0) $this->linkBookAndAuthor($book->id, $authors);
     if(count($categories) > 0) $this->linkBookAndCategories($book->id, $categories);
 
@@ -135,6 +153,25 @@ class ManageBookController extends Controller{
         'category_id' => $findedCategory->id
       ]);
     }
+  }
+  private function linkBookAndStock($book_id, $rf_ids){
+    foreach($rf_ids as $rf_id){
+      $stock = BookStock::whereRfId($rf_id)->first();
+      if(!$stock) BookStock::create([
+        'rf_id' => $rf_id,
+        'book_id' => $book_id,
+        'status' => 'available'
+      ]);
+      else if($stock->book_id !== $book_id) return (object)[
+        'result' => false,
+        'response' => 'Este RF-ID já está sendo utilizado em outro livro'
+      ];
+    }
+
+    return (object)[
+      'result' => true,
+      'response' => 'Link de livros e estoque realizado com sucesso'
+    ];
   }
   private function deleteRelationships($book_id){
     BookAuthor::whereBookId($book_id)->delete();

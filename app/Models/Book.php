@@ -32,11 +32,11 @@ class Book extends Model
 
   public function getAuthorNames(){
     if(isset($this->authors)) return $this->authors->map(function($author){ return $author->name; });
-    return [];
+    return collect([]);
   }
   public function getCategoryNames(){
     if(isset($this->categories)) return $this->categories->map(function($category){ return $category->name; });
-    return [];
+    return collect([]);
   }
   public function getStockResume(){
     return [

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Book;
-use App\Models\Transfer;
-
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+
+use App\Models\BookStock;
+use App\Models\Transfer;
 
 class ManageReservationController extends Controller{
   public function index(){
@@ -22,14 +23,35 @@ class ManageReservationController extends Controller{
     return view('manage.reservation.index', ['books' => collect([]), 'pagination' => $pagination]);
   }
   public function makeReservation($book_id){
-    $book = Book::whereId($book_id)->first();
+    $bookStock = BookStock::whereId($book_id)->whereStatus('available')->first();
 
-    if(!$book) return $this->notify(redirect()->back(), 'Livro não encontrado', 'danger');
+    if(!$bookStock) return $this->notify(
+      redirect()->back(),
+      'Não há unidades disponíveis deste livro',
+      'danger'
+    );
 
-    // $book-> verificar se existe estoque do livro
+    $expiration =  Carbon::now()->addHours(24);
+    $transfer = Transfer::create([
+      'status' => 'reserved',
+      'book_id' => $book_id,
+      'user_id' => auth()->user()->id,
+      'expiration' => $expiration,
+      'rf_id' => $bookStock->rf_id,
+      'renewals' => 0,
+      'finished' => false
+    ]);
+    $bookStock->update(['status' => 'reserved']);
+    $bookStock->book->update([
+      'available' => $bookStock->book->available - 1,
+      'reserved' => $bookStock->book->reserved + 1,
+      'transfer_id' => $transfer->id
+    ]);
 
-    // Transfer::
-    // $book_id
-    // auth()->user()->id
+    return $this->notify(
+      redirect()->back(),
+      'Livro reservado com sucesso',
+      'success'
+    );
   }
 }
