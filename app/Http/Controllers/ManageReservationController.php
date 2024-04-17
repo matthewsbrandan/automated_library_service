@@ -21,4 +21,15 @@ class ManageReservationController extends Controller{
 
     return view('manage.reservation.index', ['books' => collect([]), 'pagination' => $pagination]);
   }
+  public function makeReservation($book_id){
+    $book = Book::whereId($book_id)->first();
+
+    if(!$book) return $this->notify(redirect()->back(), 'Livro não encontrado', 'danger');
+
+    // $book-> verificar se existe estoque do livro
+
+    // Transfer::
+    // $book_id
+    // auth()->user()->id
+  }
 }

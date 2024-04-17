@@ -82,9 +82,6 @@
   @php } @endphp  
   <script>
     let current_book = null;
-    function notify(type, message){
-      alert(message)
-    }
     function handleOpenEditBook(id){
       const findedBook = books.find((book) => book.id === id);
       if(!findedBook){

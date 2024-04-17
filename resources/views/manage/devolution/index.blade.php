@@ -52,7 +52,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @if($books->count() === 0)
+                    @if(collect([])->count() === 0)
                       <tr>
                         <td colspan="4">
                           <div
@@ -62,7 +62,7 @@
                         </td>
                       </tr>
                     @endif
-                    @foreach ($books as $book)
+                    @foreach (collect([]) as $book)
                       <tr>
                         <td>
                           <div class="d-flex px-2 py-1">

@@ -86,7 +86,7 @@
                         <td>
                           <div class="d-flex px-2 py-1">
                             <div class="d-flex align-items-center">
-                              <img src="{{ $book->image }}" class="rounded-md me-2" alt="{{ $book->name }}" style="
+                              <img src="{{ $book->image }}" class="rounded-md me-2" alt="{{ $book->title }}" style="
                                 width: 3rem;
                                 background: black;
                                 height: 4rem;

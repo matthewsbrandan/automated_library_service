@@ -26,12 +26,12 @@ class ManageBookController extends Controller{
   public function store(Request $request) {
     $validated = $request->validate([
       'title'          => 'required|max:255',
-      'subtitle'       => 'required|max:255',
+      'subtitle'       => 'max:255',
       'isbn'           => 'required|max:255',
       'published_date' => 'required|max:4',
       'description'    => 'required',
-      'authors'        => 'array',
-      'categories'     => 'array',
+      'authors'        => 'max:255',
+      'categories'     => 'max:255',
       'image'          => 'max:255',
       'stock'          => 'required|integer',
     ]);
@@ -42,17 +42,17 @@ class ManageBookController extends Controller{
       'isbn'           => $request->isbn,
       'published_date' => $request->published_date,
       'description'    => $request->description,
-      'authors'        => $request->authors,
-      'categories'     => $request->categories,
       'image'          => $request->image,
       'stock'          => $request->stock,
       'available'      => $request->stock,
       'reserved'       => 0,
       'borrowed'       => 0
     ]);
-    
-    if(count($request->authors) > 0) $this->linkBookAndAuthor($book->id, $request->authors);
-    if(count($request->categories) > 0) $this->linkBookAndCategories($book->id, $request->categories);
+
+    $authors = explode(',', $request->authors);
+    $categories = count($request->categories);
+    if(count($authors) > 0) $this->linkBookAndAuthor($book->id, $authors);
+    if(count($categories) > 0) $this->linkBookAndCategories($book->id, $categories);
 
     return redirect()->route('manage.book.index')->with('message', 'Livro criado com sucesso');
   }

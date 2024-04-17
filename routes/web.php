@@ -57,6 +57,8 @@ Route::middleware('auth')->group(function () {
     });
   });
   
+  Route::get('/reservar/{book_id}', [ManageReservationController::class, 'makeReservation'])->name('reservation');
+
   Route::get('/wallet', function () {
     return view('wallet');
   })->name('wallet');
