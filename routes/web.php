@@ -58,6 +58,7 @@ Route::middleware('auth')->group(function () {
   });
   
   Route::get('/reservar/{book_id}', [ManageReservationController::class, 'makeReservation'])->name('reservation');
+  Route::put('/reservar/coletar', [ManageReservationController::class, 'collectReservation'])->name('reservation.collect');
 
   Route::get('/wallet', function () {
     return view('wallet');

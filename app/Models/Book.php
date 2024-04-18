@@ -40,9 +40,9 @@ class Book extends Model
   }
   public function getStockResume(){
     return [
-      (object)['name' => 'Disponível', 'amount' => $this->available,'percent' => ($this->available * 100) / $this->stock, 'theme' => 'success'],
-      (object)['name' => 'Reservados', 'amount' => $this->reserved, 'percent' => ($this->reserved * 100)  / $this->stock, 'theme' => 'warning'],
-      (object)['name' => 'Emprestado', 'amount' => $this->borrowed, 'percent' => ($this->borrowed * 100)  / $this->stock, 'theme' => 'dark'   ]
+      (object)['name' => 'Disponível', 'amount' => $this->available,'percent' => $this->stock === 0 ? 0 : ($this->available * 100) / $this->stock, 'theme' => 'success'],
+      (object)['name' => 'Reservados', 'amount' => $this->reserved, 'percent' => $this->stock === 0 ? 0 : ($this->reserved * 100)  / $this->stock, 'theme' => 'warning'],
+      (object)['name' => 'Emprestado', 'amount' => $this->borrowed, 'percent' => $this->stock === 0 ? 0 : ($this->borrowed * 100)  / $this->stock, 'theme' => 'dark'   ]
     ];
   }
 }

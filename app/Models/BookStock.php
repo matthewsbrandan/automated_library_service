@@ -19,4 +19,7 @@ class BookStock extends Model
   public function book(){
     return $this->belongsTo(Book::class, 'book_id');
   }
+  public function transfer(){
+    return $this->belongsTo(Transfer::class, 'transfer_id');
+  }
 }
