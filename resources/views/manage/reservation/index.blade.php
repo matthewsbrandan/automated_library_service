@@ -32,13 +32,13 @@
                   <thead class="bg-gray-100">
                     <tr>
                       <th class="text-secondary text-xs font-weight-semibold opacity-7">Livro</th>
-                      <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">Usuário</th>
-                      <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">Reservado em</th>
+                      <th class="px-2 text-secondary text-xs font-weight-semibold opacity-7">Usuário</th>
+                      <th class="px-2 text-secondary text-xs font-weight-semibold opacity-7">Reservado em</th>
                       <th class="text-secondary opacity-7"></th>
                     </tr>
                   </thead>
                   <tbody>
-                    @if($books->count() === 0)
+                    @if($requesteds->count() === 0)
                       <tr>
                         <td colspan="4">
                           <div
@@ -48,12 +48,12 @@
                         </td>
                       </tr>
                     @endif
-                    @foreach ($books as $book)
+                    @foreach ($requesteds as $transfer)
                       <tr>
                         <td>
                           <div class="d-flex px-2 py-1">
                             <div class="d-flex align-items-center">
-                              <img src="{{ $book->image }}" class="rounded-md me-2" alt="{{ $book->name }}" style="
+                              <img src="{{ $transfer->book->image }}" class="rounded-md me-2" alt="{{ $transfer->book->title }}" style="
                                 width: 3rem;
                                 background: black;
                                 height: 4rem;
@@ -61,48 +61,23 @@
                               "/>
                             </div>
                             <div class="d-flex flex-column justify-content-center ms-1">
-                              <h6 class="mb-0 text-sm font-weight-semibold">{{  $book->title }}</h6>
-                              <p class="text-sm text-secondary mb-0">{{  $book->subtitle }}</p>
-                              <em class="text-xs text-secondary mb-0" style="opacity: .7;">- {{  $book->getAuthorNames()->join(', ') }}</em>
+                              <h6 class="mb-0 text-sm font-weight-semibold">{{  $transfer->book->title }}</h6>
+                              <p class="text-sm text-secondary mb-0">{{  $transfer->book->subtitle }}</p>
+                              <em class="text-xs text-secondary mb-0" style="opacity: .7;">- {{  $transfer->book->getAuthorNames()->join(', ') }}</em>
                             </div>
                           </div>
                         </td>
                         <td>
-                          @foreach($book->getStockResume() as $stock)
-                            <div class="progress-wrapper d-flex justify-content-between align-items-center">
-                              <div class="progress-info">
-                                <div class="progress-percentage">
-                                  <div class="d-flex justify-content-between pe-2 py-1" style="width: 7rem;">
-                                    <span class="text-xs font-weight-semibold">{{  $stock->name   }}</span>
-                                    <span class="text-xs font-weight-semibold">{{  $stock->amount }}</span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="progress" style="flex: 1;">
-                                <div
-                                  class="progress-bar bg-gradient-{{ $stock->theme }}"
-                                  role="progressbar"
-                                  aria-valuenow="{{ $stock->percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $stock->percent }}%;"></div>
-                              </div>
-                            </div>
-                          @endforeach
+                          <h6 class="mb-0 text-sm font-weight-semibold">{{  $transfer->user->name }}</h6>
+                          <p class="text-sm text-secondary mb-0">{{  $transfer->user->email }}</p>
                         </td>
-                        <td class="align-middle text-center">
-                          <span class="text-secondary text-sm font-weight-normal">{{ $book->published_date }}</span>
+                        <td>
+                          <span class="text-secondary text-sm font-weight-normal">{{ $transfer->created_at->format('d/m/Y H:i') }}</span>
                         </td>
-                        <td class="align-middle">
-                          <a
-                            href="javascript:;" class="text-secondary font-weight-bold text-xs"
-                            data-bs-toggle="tooltip" data-bs-title="Editar Livro"
-                            onClick="handleOpenEditBook({{ $book->id }})"
-                          >
-                            <svg width="14" height="14" viewBox="0 0 15 16"
-                              fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                d="M11.2201 2.02495C10.8292 1.63482 10.196 1.63545 9.80585 2.02636C9.41572 2.41727 9.41635 3.05044 9.80726 3.44057L11.2201 2.02495ZM12.5572 6.18502C12.9481 6.57516 13.5813 6.57453 13.9714 6.18362C14.3615 5.79271 14.3609 5.15954 13.97 4.7694L12.5572 6.18502ZM11.6803 1.56839L12.3867 2.2762L12.3867 2.27619L11.6803 1.56839ZM14.4302 4.31284L15.1367 5.02065L15.1367 5.02064L14.4302 4.31284ZM3.72198 15V16C3.98686 16 4.24091 15.8949 4.42839 15.7078L3.72198 15ZM0.999756 15H-0.000244141C-0.000244141 15.5523 0.447471 16 0.999756 16L0.999756 15ZM0.999756 12.2279L0.293346 11.5201C0.105383 11.7077 -0.000244141 11.9624 -0.000244141 12.2279H0.999756ZM9.80726 3.44057L12.5572 6.18502L13.97 4.7694L11.2201 2.02495L9.80726 3.44057ZM12.3867 2.27619C12.7557 1.90794 13.3549 1.90794 13.7238 2.27619L15.1367 0.860593C13.9869 -0.286864 12.1236 -0.286864 10.9739 0.860593L12.3867 2.27619ZM13.7238 2.27619C14.0917 2.64337 14.0917 3.23787 13.7238 3.60504L15.1367 5.02064C16.2875 3.8721 16.2875 2.00913 15.1367 0.860593L13.7238 2.27619ZM13.7238 3.60504L3.01557 14.2922L4.42839 15.7078L15.1367 5.02065L13.7238 3.60504ZM3.72198 14H0.999756V16H3.72198V14ZM1.99976 15V12.2279H-0.000244141V15H1.99976ZM1.70617 12.9357L12.3867 2.2762L10.9739 0.86059L0.293346 11.5201L1.70617 12.9357Z"
-                                fill="#64748B" />
-                            </svg>
-                          </a>
+                        <td class="text-end">
+                          <button type="button" class="btn btn-sm btn-dark mb-0 me-2" onclick="handleSeparateBook({{ $transfer->id }})">
+                            Separar
+                          </button>
                         </td>
                       </tr>
                     @endforeach
@@ -113,7 +88,7 @@
                 <button class="btn btn-sm btn-white d-sm-block d-none mb-0" disabled="false">Anterior</button>
                 <nav aria-label="..." class="ms-auto">
                   <ul class="pagination pagination-light mb-0">
-                    @for($i = 1; $i <= $pagination->pages; $i++)
+                    @for($i = 1; $i <= $pagination->requested->pages; $i++)
                       <li class="page-item {{ $i === 1 ? 'active' : '' }}" aria-current="{{ $i === 1 ? 'page' : '' }}">
                         <a class="page-link {{ $i === 1 ? '' : 'border-0' }} font-weight-bold" href="javascript:;">{{ $i }}</a>
                       </li>
@@ -122,7 +97,7 @@
                 </nav>
                 <button
                   class="btn btn-sm btn-white d-sm-block d-none mb-0 ms-auto"
-                  disabled="{{ $pagination->pages === 1 ? "true": "false" }}"
+                  disabled="{{ $pagination->requested->pages === 1 ? "true": "false" }}"
                 >Próximo</button>
               </div>
             </div>
@@ -170,13 +145,12 @@
                   <thead class="bg-gray-100">
                     <tr>
                       <th class="text-secondary text-xs font-weight-semibold opacity-7">Livro</th>
-                      <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">Estoque</th>
-                      <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">Publicado em</th>
-                      <th class="text-secondary opacity-7"></th>
+                      <th class="px-2 text-secondary text-xs font-weight-semibold opacity-7">Usuário</th>
+                      <th class="px-2 text-secondary text-xs font-weight-semibold opacity-7">Expiração</th>
                     </tr>
                   </thead>
                   <tbody>
-                    @if($books->count() === 0)
+                    @if($reserveds->count() === 0)
                       <tr>
                         <td colspan="4">
                           <div
@@ -186,12 +160,12 @@
                         </td>
                       </tr>
                     @endif
-                    @foreach ($books as $book)
+                    @foreach ($reserveds as $transfer)
                       <tr>
                         <td>
                           <div class="d-flex px-2 py-1">
                             <div class="d-flex align-items-center">
-                              <img src="{{ $book->image }}" class="rounded-md me-2" alt="{{ $book->name }}" style="
+                              <img src="{{ $transfer->book->image }}" class="rounded-md me-2" alt="{{ $transfer->book->title }}" style="
                                 width: 3rem;
                                 background: black;
                                 height: 4rem;
@@ -199,48 +173,18 @@
                               "/>
                             </div>
                             <div class="d-flex flex-column justify-content-center ms-1">
-                              <h6 class="mb-0 text-sm font-weight-semibold">{{  $book->title }}</h6>
-                              <p class="text-sm text-secondary mb-0">{{  $book->subtitle }}</p>
-                              <em class="text-xs text-secondary mb-0" style="opacity: .7;">- {{  $book->getAuthorNames()->join(', ') }}</em>
+                              <h6 class="mb-0 text-sm font-weight-semibold">{{  $transfer->book->title }}</h6>
+                              <p class="text-sm text-secondary mb-0">{{  $transfer->book->subtitle }}</p>
+                              <em class="text-xs text-secondary mb-0" style="opacity: .7;">- {{  $transfer->book->getAuthorNames()->join(', ') }}</em>
                             </div>
                           </div>
                         </td>
                         <td>
-                          @foreach($book->getStockResume() as $stock)
-                            <div class="progress-wrapper d-flex justify-content-between align-items-center">
-                              <div class="progress-info">
-                                <div class="progress-percentage">
-                                  <div class="d-flex justify-content-between pe-2 py-1" style="width: 7rem;">
-                                    <span class="text-xs font-weight-semibold">{{  $stock->name   }}</span>
-                                    <span class="text-xs font-weight-semibold">{{  $stock->amount }}</span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="progress" style="flex: 1;">
-                                <div
-                                  class="progress-bar bg-gradient-{{ $stock->theme }}"
-                                  role="progressbar"
-                                  aria-valuenow="{{ $stock->percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $stock->percent }}%;"></div>
-                              </div>
-                            </div>
-                          @endforeach
+                          <h6 class="mb-0 text-sm font-weight-semibold">{{  $transfer->user->name }}</h6>
+                          <p class="text-sm text-secondary mb-0">{{  $transfer->user->email }}</p>
                         </td>
-                        <td class="align-middle text-center">
-                          <span class="text-secondary text-sm font-weight-normal">{{ $book->published_date }}</span>
-                        </td>
-                        <td class="align-middle">
-                          <a
-                            href="javascript:;" class="text-secondary font-weight-bold text-xs"
-                            data-bs-toggle="tooltip" data-bs-title="Editar Livro"
-                            onClick="handleOpenEditBook({{ $book->id }})"
-                          >
-                            <svg width="14" height="14" viewBox="0 0 15 16"
-                              fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                d="M11.2201 2.02495C10.8292 1.63482 10.196 1.63545 9.80585 2.02636C9.41572 2.41727 9.41635 3.05044 9.80726 3.44057L11.2201 2.02495ZM12.5572 6.18502C12.9481 6.57516 13.5813 6.57453 13.9714 6.18362C14.3615 5.79271 14.3609 5.15954 13.97 4.7694L12.5572 6.18502ZM11.6803 1.56839L12.3867 2.2762L12.3867 2.27619L11.6803 1.56839ZM14.4302 4.31284L15.1367 5.02065L15.1367 5.02064L14.4302 4.31284ZM3.72198 15V16C3.98686 16 4.24091 15.8949 4.42839 15.7078L3.72198 15ZM0.999756 15H-0.000244141C-0.000244141 15.5523 0.447471 16 0.999756 16L0.999756 15ZM0.999756 12.2279L0.293346 11.5201C0.105383 11.7077 -0.000244141 11.9624 -0.000244141 12.2279H0.999756ZM9.80726 3.44057L12.5572 6.18502L13.97 4.7694L11.2201 2.02495L9.80726 3.44057ZM12.3867 2.27619C12.7557 1.90794 13.3549 1.90794 13.7238 2.27619L15.1367 0.860593C13.9869 -0.286864 12.1236 -0.286864 10.9739 0.860593L12.3867 2.27619ZM13.7238 2.27619C14.0917 2.64337 14.0917 3.23787 13.7238 3.60504L15.1367 5.02064C16.2875 3.8721 16.2875 2.00913 15.1367 0.860593L13.7238 2.27619ZM13.7238 3.60504L3.01557 14.2922L4.42839 15.7078L15.1367 5.02065L13.7238 3.60504ZM3.72198 14H0.999756V16H3.72198V14ZM1.99976 15V12.2279H-0.000244141V15H1.99976ZM1.70617 12.9357L12.3867 2.2762L10.9739 0.86059L0.293346 11.5201L1.70617 12.9357Z"
-                                fill="#64748B" />
-                            </svg>
-                          </a>
+                        <td>
+                          <span class="text-secondary text-sm font-weight-normal">{{ $transfer->expiration }}</span>
                         </td>
                       </tr>
                     @endforeach
@@ -251,7 +195,7 @@
                 <button class="btn btn-sm btn-white d-sm-block d-none mb-0" disabled="false">Anterior</button>
                 <nav aria-label="..." class="ms-auto">
                   <ul class="pagination pagination-light mb-0">
-                    @for($i = 1; $i <= $pagination->pages; $i++)
+                    @for($i = 1; $i <= $pagination->reserved->pages; $i++)
                       <li class="page-item {{ $i === 1 ? 'active' : '' }}" aria-current="{{ $i === 1 ? 'page' : '' }}">
                         <a class="page-link {{ $i === 1 ? '' : 'border-0' }} font-weight-bold" href="javascript:;">{{ $i }}</a>
                       </li>
@@ -260,19 +204,15 @@
                 </nav>
                 <button
                   class="btn btn-sm btn-white d-sm-block d-none mb-0 ms-auto"
-                  disabled="{{ $pagination->pages === 1 ? "true": "false" }}"
+                  disabled="{{ $pagination->reserved->pages === 1 ? "true": "false" }}"
                 >Próximo</button>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <x-modals.modal-separate/>
       <x-app.footer />
     </div>
   </main>
-  <x-modals.modal-add-book/>
-  <script>
-    const books = {!! $books->toJson() !!};
-  </script>
-  <x-modals.modal-edit-book/>
 </x-app-layout>

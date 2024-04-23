@@ -57,8 +57,12 @@ Route::middleware('auth')->group(function () {
     });
   });
   
-  Route::get('/reservar/{book_id}', [ManageReservationController::class, 'makeReservation'])->name('reservation');
-  Route::put('/reservar/coletar', [ManageReservationController::class, 'collectReservation'])->name('reservation.collect');
+  Route::name('reservation.')->group(function (){
+    Route::get('/reserva/solicitar/{book_id}', [ManageReservationController::class, 'requestReservation'])->name('request');
+    Route::get('/reserva/recusar/{book_id}', [ManageReservationController::class, 'refuseReservation'])->name('refuse');
+    Route::get('/reserva/separar/{transfer_id}/{rf_id}', [ManageReservationController::class, 'separateReservation'])->name('separate');
+    Route::put('/reservar/coletar', [ManageReservationController::class, 'collectReservation'])->name('collect');
+  });
 
   Route::get('/wallet', function () {
     return view('wallet');

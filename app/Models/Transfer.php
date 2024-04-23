@@ -10,7 +10,7 @@ class Transfer extends Model
   use HasFactory;
 
   protected $fillable = [
-    'status', // reserved | borrowed | expired
+    'status', // requested | reserved | borrowed | expired
     'book_id',
     'user_id',
     'expiration',
@@ -18,8 +18,12 @@ class Transfer extends Model
     'finished',
     'rf_id'
   ];
+  protected $dates = ['created_at','updated_at', 'expiration'];
 
   public function book(){
     return $this->belongsTo(Book::class, 'book_id');
+  }
+  public function user(){
+    return $this->belongsTo(User::class, 'user_id');
   }
 }

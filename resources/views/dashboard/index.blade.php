@@ -10,18 +10,20 @@
               <h3 class="font-weight-bold mb-0">Olá, {{ auth()->user()->name }}</h3>
               <p class="mb-0">Qual livro você irá ler hoje?</p>
             </div>
-            <button
-              type="button"
-              class="btn btn-sm btn-white btn-icon d-flex align-items-center ms-md-auto mb-sm-0 mb-2 me-2"
-              data-bs-toggle="modal" data-bs-target="#modalCollect"
-            >
-              <span class="btn-inner--icon">
-                <span class="p-1 bg-success rounded-circle d-flex ms-auto me-2">
-                  <span class="visually-hidden">New</span>
+            @if($transfers->count() > 0)
+              <button
+                type="button"
+                class="btn btn-sm btn-white btn-icon d-flex align-items-center ms-md-auto mb-sm-0 mb-2"
+                data-bs-toggle="modal" data-bs-target="#modalCollect"
+              >
+                <span class="btn-inner--icon">
+                  <span class="p-1 bg-success rounded-circle d-flex ms-auto me-2">
+                    <span class="visually-hidden">New</span>
+                  </span>
                 </span>
-              </span>
-              <span class="btn-inner--text">Coletar</span>
-            </button>
+                <span class="btn-inner--text">Coletar</span>
+              </button>
+            @endif
           </div>
         </div>
       </div>
@@ -50,7 +52,7 @@
                             <small class="text-dark font-weight-bolder">{{ $book->available }}</small>
                             <p class="text-dark opacity-6 text-xs font-weight-bolder mb-0">Autores</p>
                             <small class="text-dark font-weight-bolder d-block">{{ $book->getAuthorNames()->implode(', ') }}</small>
-                            <a href="{{ route('reservation', ['book_id' => $book->id]) }}" class="btn btn-sm btn-dark mt-4">Reservar</a>
+                            <a href="{{ route('reservation.request', ['book_id' => $book->id]) }}" class="btn btn-sm btn-dark mt-4">Solicitar Reserva</a>
                           </div>
                         </div>
                       </div>
@@ -97,10 +99,19 @@
                             </div>
                             <div class="my-auto">
                               <h6 class="mb-0 text-sm">{{ $transfer->book->title }}</h6>
+                              @if($transfer->status === 'reserved' && $transfer->expiration)
+                                <small class="text-secondary">{{ $transfer->expiration }}</small>
+                              @endif    
                             </div>
                           </div>
                         </td>
-                        <td></td>
+                        <td class="text-end">
+                          @if($transfer->status === 'requested')
+                            <span class="badge badge-warning text-xs">pendente</span>
+                          @else
+                            <span class="badge badge-success text-xs">separado</span>
+                          @endif
+                        </td>
                       </tr>
                     @endforeach
                   </tbody>

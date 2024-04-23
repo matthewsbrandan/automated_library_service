@@ -5,53 +5,106 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+use App\Models\Book;
 use App\Models\BookStock;
 use App\Models\Transfer;
 
 class ManageReservationController extends Controller{
   public function index(){
-    $pagination = (object)['total' => 0, 'per_page' => 10, 'pages' => 1];
+    $pagination = (object)[
+      'requested' => (object)['total' => 0, 'per_page' => 10, 'pages' => 1],
+      'reserved' =>  (object)['total' => 0, 'per_page' => 10, 'pages' => 1]
+    ];
 
-    $pagination->total = Transfer::whereStatus('reserved')->count();
-    $pagination->pages = ceil($pagination->total / $pagination->per_page);
+    $datas = (object)['requested' => collect([]), 'reserved' => collect([])];
 
-    $transfereds = Transfer::whereStatus('reserved')
-      ->orderBy('expiration','desc')
-      ->take($pagination->per_page)
-      ->get();
+    foreach(['requested', 'reserved'] as $table){
+      $pagination->$table->total = Transfer::whereStatus($table)->count();
+      $pagination->$table->pages = ceil($pagination->$table->total / $pagination->$table->per_page);
 
-    return view('manage.reservation.index', ['books' => collect([]), 'pagination' => $pagination]);
+      $datas->$table = Transfer::whereStatus($table)
+        ->orderBy('expiration','desc')
+        ->take($pagination->$table->per_page)
+        ->get();
+    }
+    
+    return view('manage.reservation.index', [
+      'requesteds'  => $datas->requested,
+      'reserveds'   => $datas->reserved,
+      'pagination' => $pagination
+    ]);
   }
-  public function makeReservation($book_id){
-    $bookStock = BookStock::whereBookId($book_id)->whereStatus('available')->first();
-    if(!$bookStock) return $this->notify(
+  public function requestReservation($book_id){
+    $book = Book::whereId($book_id)->first();
+    if(!$book) return $this->notify(
+      redirect()->back(),
+      'Livro não encontrado',
+      'danger'
+    );
+    if($book->available <= 0) return $this->notify(
       redirect()->back(),
       'Não há unidades disponíveis deste livro',
       'danger'
     );
-
+    
     $expiration =  Carbon::now()->addHours(24);
     $transfer = Transfer::create([
-      'status' => 'reserved',
+      'status' => 'requested',
       'book_id' => $book_id,
       'user_id' => auth()->user()->id,
       'expiration' => $expiration,
-      'rf_id' => $bookStock->rf_id,
+      'rf_id' => '',
       'renewals' => 0,
       'finished' => false
+    ]);
+    
+    $book->update([
+      'available' => $book->available - 1,
+      'reserved' => $book->reserved + 1,
+    ]);
+
+    return $this->notify(
+      redirect()->back(),
+      'Solicitação de reserva enviada com sucesso',
+      'success'
+    );
+  }
+  public function refuseReservation($book_id){
+    return $this->notify(
+      redirect()->back(),
+      'Em desenvolvimento',
+      'danger'
+    );
+  }
+  public function separateReservation($transfer_id, $rf_id){
+    $transfer = Transfer::whereId($transfer_id)->first();
+    if(!$transfer || $transfer->status !== 'requested') return $this->notify(
+      redirect()->back(),
+      'Solicitação de reserva não encontrada, ou não está com status correto',
+      'danger'
+    );
+    
+    $bookStock = BookStock::whereBookId($transfer->book_id)->whereRfId($rf_id)->whereStatus('available')->first();
+    if(!$bookStock) return $this->notify(
+      redirect()->back(),
+      'Livro não encontrado ou não disponível',
+      'danger'
+    );
+
+    $expiration =  Carbon::now()->addHours(24);
+    $transfer->update([
+      'status' => 'reserved',
+      'expiration' => $expiration,
+      'rf_id' => $rf_id
     ]);
     $bookStock->update([
       'status' => 'reserved',
       'transfer_id' => $transfer->id
     ]);
-    $bookStock->book->update([
-      'available' => $bookStock->book->available - 1,
-      'reserved' => $bookStock->book->reserved + 1,
-    ]);
-
+    
     return $this->notify(
       redirect()->back(),
-      'Livro reservado com sucesso',
+      'Livro separado com sucesso',
       'success'
     );
   }

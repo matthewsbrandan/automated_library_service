@@ -15,7 +15,7 @@ class DashboardController extends Controller{
     $reservations = collect([]);
 
     foreach($allTransfers as $trs){
-      if($trs->status === 'reserved') $reservations->push($trs);
+      if($trs->status === 'requested' || $trs->status === 'reserved') $reservations->push($trs);
       else $transfers->push($trs);
     }
 
