@@ -18,7 +18,7 @@ class ManageBookController extends Controller{
     $pagination->total = Book::count();
     $pagination->pages = ceil($pagination->total / $pagination->per_page);
 
-    $books = Book::orderBy('updated_at','desc')
+    $books = Book::with(['bookStocks'])->orderBy('updated_at','desc')
       ->take($pagination->per_page)
       ->get();
 

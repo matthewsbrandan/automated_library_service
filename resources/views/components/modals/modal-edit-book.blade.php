@@ -32,18 +32,31 @@
               @method('PUT')
               <div class="row">
                 @foreach ([
-                  (object)['name' => 'isbn',           'label' => 'ISBN',           'type' => 'text'  ],
-                  (object)['name' => 'title',          'label' => 'Title',          'type' => 'text'  ],
-                  (object)['name' => 'subtitle',       'label' => 'Subtitle',       'type' => 'text'  ],
-                  (object)['name' => 'authors',        'label' => 'Authors',        'type' => 'text', 'is_array' => true ],
-                  (object)['name' => 'published_date', 'label' => 'Published Date', 'type' => 'text'  ],
-                  (object)['name' => 'description',    'label' => 'Description',    'type' => 'text'  ],
-                  (object)['name' => 'categories',     'label' => 'Categories',     'type' => 'text', 'is_array' => true ],
-                  (object)['name' => 'image',          'label' => 'Image',          'type' => 'url'   ],
-                  (object)['name' => 'stock',          'label' => 'Stock',          'type' => 'number'],
-                  (object)['name' => 'available',      'label' => 'Available',      'type' => 'number'],  
-                  (object)['name' => 'reserved',       'label' => 'Reserved',       'type' => 'number'],
-                  (object)['name' => 'borrowed',       'label' => 'Borrowed',       'type' => 'number'],
+                  (object)[
+                    'name' => 'isbn', 'label' => 'ISBN', 'type' => 'text',
+                    'placeholder' => 'Digite o ISBN do livro', 'required' => false
+                  ], (object)[
+                    'name' => 'title', 'label' => 'Título', 'type' => 'text',
+                    'placeholder' => 'Digite o título', 'required' => true
+                  ], (object)[
+                    'name' => 'subtitle', 'label' => 'Subtítulo', 'type' => 'text',
+                    'placeholder' => 'Digite o subtítulo', 'required' => false
+                  ], (object)[
+                    'name' => 'authors', 'label' => 'Autores', 'type' => 'text', 'is_array' => true,
+                    'placeholder' => 'Digite os autores separados por virgula', 'required' => true
+                  ], (object)[
+                    'name' => 'published_date', 'label' => 'Data de Publicação', 'type' => 'text',
+                    'placeholder' => 'Digite a data de publicação', 'required' => true
+                  ], (object)[
+                    'name' => 'description', 'label' => 'Descrição', 'type' => 'text',
+                    'placeholder' => 'Digite a descrição', 'required' => true
+                  ], (object)[
+                    'name' => 'categories', 'label' => 'Categorias', 'type' => 'text', 'is_array' => true,
+                    'placeholder' => 'Digite as categorias separadas por virgula', 'required' => false
+                  ], (object)[
+                    'name' => 'image', 'label' => 'Imagem', 'type' => 'url',
+                    'placeholder' => 'Digite a url da imagem', 'required' => false
+                  ]
                 ] as $field)
                   <div class="col-md-6">
                     <label for="field-update-{{ $field->name }}">{{ $field->label }}</label>
@@ -61,6 +74,40 @@
                     </div>
                   </div>
                 @endforeach
+                <div class="col-md-6">
+                  <label for="field-rf-id">RF-ID</label>
+                  <div class="input-group mb-3">
+                    <input
+                      type="number"
+                      class="form-control"
+                      placeholder="Digite o RF-ID do livro"
+                      aria-label="RF-ID"
+                      id="field-rf-id"
+                      v-model="curr_rf_id"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-light btn-sm btn-e-rounded mb-0"
+                      v-on:click="addNewRfId()"
+                    >Adicionar</button>
+                  </div>
+                  <p class="text-sm text-secondary px-2">
+                    Adicione o rf-id de cada unidade de livro.
+                  </p>
+                </div>
+                <div class="col-md-6">
+                  <label for="field-rf-id">RF-IDs</label>
+                  <ul class="list-group">
+                    <li class="list-group-item text-secondary text-sm" v-if="rf_ids.length === 0">Adicione pelo menos 1 RF-ID</li>
+                    <li class="list-group-item d-flex align-items-center justify-content-between" v-for="rf_id in rf_ids" :key="rf_id">
+                      <span>@{{ rf_id }}</span>
+                      <button type="button" class="p-1 btn m-0" v-on:click="removeRfId(rf_id)">
+                        <i class="fas fa-trash" aria-hidden="true"></i>
+                      </button>
+                    </li>
+                  </ul>
+                  <input type="hidden" name="rf_ids" v-bind:value="JSON.stringify(rf_ids ?? [])"/>
+                </div>
               </div>
               <div class="text-center">
                 <button type="submit" class="btn btn-dark btn-lg btn-rounded w-100 mt-4">Atualizar</button>
@@ -99,7 +146,8 @@
         authors: [], categories: [],
         isbn: '', title: '', subtitle: '',
         published_date: '', description: '', image: '',
-        stock: 0, available: 0, reserved: 0, borrowed: 0
+        curr_rf_id: '',
+        rf_ids: []
       },
       methods: {
         open: function(){
@@ -113,15 +161,29 @@
           this.description = current_book.description;
           this.categories = (current_book.categories ?? []).length > 0 ? current_book.categories[0].name:'';
           this.image = current_book.image;
-          this.stock = current_book.stock;
-          this.available = current_book.available;
-          this.reserved = current_book.reserved;
-          this.borrowed = current_book.borrowed;
+          this.rf_ids = current_book.book_stocks ? current_book.book_stocks.map(stock => stock.rf_id) : [];
 
           const update_url = `{{ substr(route('manage.book.update', ['id'=> '0']),0,-1) }}${current_book.id}`;
           document.getElementById('form-modal-edit-book').action = update_url;
           const delete_url = `{{ substr(route('manage.book.delete', ['id' => '0']),0,-1) }}${current_book.id}`;
           document.getElementById('form-modal-delete-book').action = delete_url;
+        },
+        addNewRfId: function(){
+          if(!this.curr_rf_id){
+            notify('danger', 'É obrigatório preencher o RF-ID')
+            return;
+          }
+          
+          if(this.rf_ids.find((id) => id === this.curr_rf_id)){
+            notify('danger', 'Este RF-ID já foi adicionado')
+            return;
+          }
+
+          this.rf_ids.push(this.curr_rf_id);
+          this.curr_rf_id = '';
+        },
+        removeRfId: function(rf_id){
+          this.rf_ids = this.rf_ids.filter((id) => id !== rf_id)
         }
       }
     })

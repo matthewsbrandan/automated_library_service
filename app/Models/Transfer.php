@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Transfer extends Model
 {
@@ -16,14 +17,24 @@ class Transfer extends Model
     'expiration',
     'renewals',
     'finished',
-    'rf_id'
+    'rf_id',
+    'token'
   ];
-  protected $dates = ['created_at','updated_at', 'expiration'];
 
   public function book(){
     return $this->belongsTo(Book::class, 'book_id');
   }
   public function user(){
     return $this->belongsTo(User::class, 'user_id');
+  }
+  public function bookStock(){
+    return $this->hasOne(BookStock::class, 'transfer_id');
+  }
+
+  public function getExpiration(){
+    if(!$this->expiration) return '';
+
+    $carbonDate = Carbon::parse($this->expiration);
+    return $carbonDate->format('d/m/Y H:i');
   }
 }

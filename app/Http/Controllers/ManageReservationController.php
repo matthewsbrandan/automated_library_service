@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 use App\Models\Book;
 use App\Models\BookStock;
@@ -95,7 +96,7 @@ class ManageReservationController extends Controller{
     $transfer->update([
       'status' => 'reserved',
       'expiration' => $expiration,
-      'rf_id' => $rf_id
+      'rf_id' => $rf_id,
     ]);
     $bookStock->update([
       'status' => 'reserved',
@@ -108,69 +109,74 @@ class ManageReservationController extends Controller{
       'success'
     );
   }
+  public function generateCollectToken($rf_id){
+    $transfer = Transfer::whereUserId(auth()->user()->id)->whereRfId($rf_id)->first();
+    if(!$transfer) return response()->json([
+      'result' => false, 'response' => 'Reserva não encontrada'
+    ]);
+
+    if($transfer->token) return response()->json([
+      'result' => true,
+      'response' => 'Token de coleta já existe',
+      'data' => $transfer->token
+    ]);
+
+    $token = null;
+    $counter=0;
+    do{
+      $token = null;
+      if($counter >= 10) break;
+      $token = Str::random(6);
+      $counter++;
+    }while(!!Transfer::whereStatus('reserved')->whereToken($token)->first());
+
+    if(!$token) return response()->json([
+      'result' => false,
+      'response' => 'Não foi possível gerar um código para coleta do livro',
+    ]);
+    $transfer->update(['token' => $token]);
+
+    return response()->json([
+      'result' => true,
+      'response' => 'Token gerado com sucesso',
+      'data' => $token
+    ]);
+  }
   public function collectReservation(Request $request){
-    if(!$request->rf_id) return $this->notify(
-      redirect()->back(),
-      'É obrigatório preencher o rf_id do livro',
-      'danger'
-    );
+    if(!$request->token) return response()->json([
+      'result' => false,
+      'response' => 'É obrigatório preencher o token do livro'
+    ]);
 
-    $bookStock = BookStock::whereRfId($request->rf_id)->first();
-    if(!$bookStock) return $this->notify(
-      redirect()->back(),
-      'Livro não encontrado',
-      'danger'
-    );
+    $transfer = Transfer::whereToken($request->token)->first();
 
-    if($bookStock->status === 'borrowed') return $this->notify(
-      redirect()->back(),
-      'Este livro não está disponível',
-      'danger'
-    );
+    if(!$transfer || !$transfer->bookStock) return response()->json([
+      'result' => false,
+      'response' => 'Reserva não encontrada'
+    ]);
+
+    if($transfer->status !== 'reserved') return response()->json([
+      'result' => false,
+      'response' => 'O livro não está disponível para coleta',
+    ]);
 
     $expiration =  Carbon::now()->addDays(5);
+     
+    $transfer->bookStock->update(['status' => 'borrowed']);
 
-    if($bookStock->status === 'reserved'){
-      if(!$bookStock->transfer || $bookStock->transfer->user_id !== auth()->user()->id) return $this->notify(
-        redirect()->back(),
-        'Este livro não pode ser coletado, pois foi reservado p/ outra pessoa',
-        'danger'
-      );
- 
-      $bookStock->update(['status' => 'borrowed']);
-
-      $bookStock->transfer->update([
-        'expiration' => $expiration,
-        'status' => 'borrowed'
-      ]);
-      
-      $bookStock->book->update([
-        'reserved' => $bookStock->book->reserved - 1,
-        'borrowed' => $bookStock->book->borrowed + 1,
-      ]);
-    }else{
-      $transfer = Transfer::create([
-        'status' => 'borrowed',
-        'book_id' => $bookStock->book_id,
-        'user_id' => auth()->user()->id,
-        'expiration' => $expiration,
-        'rf_id' => $bookStock->rf_id,
-        'renewals' => 0,
-        'finished' => false
-      ]);
-
-      $bookStock->update(['status' => 'borrowed', 'transfer_id' => $transfer->id]);
-
-      $bookStock->book->update([
-        'available' => $bookStock->book->available - 1,
-        'borrowed' => $bookStock->book->borrowed + 1,
-      ]);
-    }
-
-    return $this->notify(
-      redirect()->back(),
-      'Coleta registrada com sucesso',
-      'success'
-    );
+    $transfer->update([
+      'expiration' => $expiration,
+      'status' => 'borrowed'
+    ]);
+    
+    $transfer->book->update([
+      'reserved' => $transfer->book->reserved - 1,
+      'borrowed' => $transfer->book->borrowed + 1,
+    ]);
+    
+    return response()->json([
+      'result' => true,
+      'response' => 'Coleta registrada com sucesso',
+    ]);
   }
 }

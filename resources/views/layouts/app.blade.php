@@ -467,6 +467,21 @@
     
       setTimeout(() => { $(`#${notify_id}`).hide('slow'); }, timeout);
     }
+    
+    const genericRequest = async (method, url, body) => await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      ...(method === 'POST' ? { body: JSON.stringify(body) }:{})
+    }).then((response) => response.json()).catch((error) => ({
+      result: false,
+      response: error.message ?? error.response ?? 'Houve um erro inesperado'
+    }));
+
+    const api = {
+      post: async (url, body) => await genericRequest('POST', url, body),
+      get:  async (url) => await genericRequest('GET', url)
+    }
+
     $(function(){
       $('body').prepend(`
       <div class="d-flex flex-column justify-content-end" style="

@@ -29,6 +29,9 @@ class Book extends Model
   public function categories(){
     return $this->belongsToMany(Category::class, 'book_categories', 'book_id', 'category_id');
   }
+  public function bookStocks(){
+    return $this->hasMany(BookStock::class, 'book_id');
+  }
 
   public function getAuthorNames(){
     if(isset($this->authors)) return $this->authors->map(function($author){ return $author->name; });
