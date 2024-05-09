@@ -76,7 +76,11 @@ class ManageBookController extends Controller{
   }
   public function update(Request $request, $id) {
     $book = Book::whereId($id)->first();
-    if(!$book) return redirect()->route('manage.book.index')->with('message', 'Livro não encontrado');
+    if(!$book) return $this->notify(
+      redirect()->back(),
+      'Livro não encontrado',
+      'danger'
+    );
 
     $validated = $request->validate([
       'title'          => 'required|max:255',
@@ -87,11 +91,22 @@ class ManageBookController extends Controller{
       'authors'        => 'array',
       'categories'     => 'array',
       'image'          => 'max:255',
-      'stock'          => 'required|integer',
-      'available'      => 'required|integer',
-      'reserved'       => 'required|integer',
-      'borrowed'       => 'required|integer'
     ]);
+
+    $rf_ids = $request->rf_ids ? json_decode($request->rf_ids) : [];
+
+    $response = $this->handleUpdateBookAndStock($id, $rf_ids);
+    if(!$response->result) return $this->notify(
+      redirect()->back(),
+      $response->response,
+      'danger'
+    );
+
+    $stock = $book->stock + $response->data;
+    $available = $book->available + $response->data;
+    
+    if($stock < 0) $stock = 0;
+    if($available < 0) $available = 0;
 
     $this->deleteRelationships($id);
 
@@ -107,13 +122,15 @@ class ManageBookController extends Controller{
       'authors'        => $request->authors,
       'categories'     => $request->categories,
       'image'          => $request->image,
-      'stock'          => $request->stock,
-      'available'      => $request->stock,
-      'reserved'       => $request->reserved,
-      'borrowed'       => $request->borrowed
+      'stock'          => $stock,
+      'available'      => $available
     ]);
 
-    return redirect()->route('manage.book.index')->with('message', 'Livro atualizado com sucesso');
+    return $this->notify(
+      redirect()->route('manage.book.index'),
+      'Livro atualizado com sucesso',
+      'success'
+    );
   }
   public function delete($id){
     $book = Book::whereId($id)->first();
@@ -142,6 +159,8 @@ class ManageBookController extends Controller{
   }
   private function linkBookAndCategories($book_id, $categories){
     foreach($categories as $category){
+      if(!$category) continue;
+
       $findedCategory = Category::whereName($category)->first();
       
       if(!$findedCategory) $findedCategory = Category::create([
@@ -172,6 +191,40 @@ class ManageBookController extends Controller{
       'result' => true,
       'response' => 'Link de livros e estoque realizado com sucesso'
     ];
+  }
+  private function handleUpdateBookAndStock($book_id, $rf_ids){
+    $bookStocks = BookStock::whereBookId($book_id)->get();
+
+    $modifier = 0; // adição ou remoção de quantidade de estoque
+
+    $existents = [];
+    foreach($bookStocks as $bookStock){
+      if(!in_array($bookStock->rf_id, $rf_ids)){
+        if($bookStock->status !== 'available') return (object)[
+          'result'   => false,
+          'response' => 'O rf-id ' . $bookStock->rf_id . ' não pode ser removido'
+        ];
+        
+        $modifier--;
+        $bookStock->delete();
+      }
+      else array_push($existents, $bookStock->rf_id);
+    }
+
+    foreach($rf_ids as $rf_id){
+      if(!in_array($rf_id, $existents)){
+        BookStock::create([
+          'rf_id' => $rf_id,
+          'book_id' => $book_id,
+          'status' => 'available',
+          'transfer_id' => 0
+        ]);
+
+        $modifier++;        
+      }
+    }
+
+    return (object)['result' => true, 'response' => 'Estoque atualizado', 'data' => $modifier];
   }
   private function deleteRelationships($book_id){
     BookAuthor::whereBookId($book_id)->delete();

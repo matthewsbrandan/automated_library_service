@@ -69,7 +69,7 @@
                         id="field-update-{{ $field->name }}"
                         v-model="{{ $field->name }}"
                         name="{{ $field->name . (isset($field->is_array) ? '[]':'' )}}"
-                        required
+                        {{ $field->required ? 'required':'' }}
                       />
                     </div>
                   </div>
