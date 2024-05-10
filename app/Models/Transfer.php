@@ -11,14 +11,15 @@ class Transfer extends Model
   use HasFactory;
 
   protected $fillable = [
-    'status', // requested | reserved | borrowed | expired
+    'status', // requested | reserved | borrowed | expired | returned
     'book_id',
     'user_id',
     'expiration',
     'renewals',
     'finished',
     'rf_id',
-    'token'
+    'token',
+    'returned_at'
   ];
 
   public function book(){

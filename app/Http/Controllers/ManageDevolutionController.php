@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+
 use App\Models\Book;
 use App\Models\Transfer;
 
@@ -41,7 +43,11 @@ class ManageDevolutionController extends Controller{
 
     $transfer->bookStock->update(['status' => 'available', 'transfer_id' => 0]);
 
-    $transfer->update(['finished' => true]);
+    $transfer->update([
+      'status' => 'returned',
+      'finished' => true,
+      'returned' => Carbon::now()
+    ]);
     
     $transfer->book->update([
       'borrowed' => $transfer->book->borrowed - 1,
