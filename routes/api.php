@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ManageReservationController;
+use App\Http\Controllers\ManageDevolutionController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,4 +22,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::name('api.')->group(function(){
     Route::post('/coletar', [ManageReservationController::class, 'collectReservation'])->name('collect');
+    Route::post('/devolucao', [ManageDevolutionController::class, 'devolution'])->name('devolution');
 });
