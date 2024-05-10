@@ -1,45 +1,48 @@
-<!-- Modal -->
-<div class="modal fade" id="modalAddBook" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="modalEditBook" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-body p-0">
+        <button
+          type="button"
+          class="d-none"
+          id="openModalEditBook"
+          data-bs-toggle="modal" data-bs-target="#modalEditBook"
+          v-on:click="open()"
+        ></button>
         <div class="card card-plain">
           <div class="card-header pb-0 text-left">
-              <h3 class="font-weight-bolder text-dark">Novo Livro</h3>
-              <p class="mb-0">Adicione um novo livro ao acervo</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h3 class="font-weight-bolder text-dark">Editar Livro</h3>
+                <p class="mb-0">Edite os detalhes do livro</p>
+              </div>
+  
+              <form method="POST" id="form-modal-delete-book">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="p-2 btn">
+                  <i class="fas fa-trash" aria-hidden="true"></i>
+                </button>
+              </form>
+            </div>
           </div>
           <div class="card-body pb-3">
-            <form role="form text-left" method="POST" action="{{ route('manage.book.store') }}">
+            <form role="form text-left" method="POST" id="form-modal-edit-book">
               @csrf
+              @method('PUT')
               <div class="row">
-                <div class="col-md-12">
-                  <label for="field-isbn">ISBN</label>
-                  <div class="input-group mb-3">
-                    <input
-                      type="number"
-                      class="form-control"
-                      placeholder="Digite o ISBN do livro"
-                      aria-label="ISBN"
-                      id="field-isbn"
-                      name="isbn"
-                      required
-                    />
-                    <button
-                      type="button"
-                      class="btn btn-light btn-sm btn-e-rounded mb-0"
-                      onclick="completeWithISBN()"
-                    >Buscar</button>
-                  </div>
-                </div>
                 @foreach ([
                   (object)[
+                    'name' => 'isbn', 'label' => 'ISBN', 'type' => 'text',
+                    'placeholder' => 'Digite o ISBN do livro', 'required' => false
+                  ], (object)[
                     'name' => 'title', 'label' => 'Título', 'type' => 'text',
                     'placeholder' => 'Digite o título', 'required' => true
                   ], (object)[
                     'name' => 'subtitle', 'label' => 'Subtítulo', 'type' => 'text',
                     'placeholder' => 'Digite o subtítulo', 'required' => false
                   ], (object)[
-                    'name' => 'authors', 'label' => 'Autores', 'type' => 'text',
+                    'name' => 'authors', 'label' => 'Autores', 'type' => 'text', 'is_array' => true,
                     'placeholder' => 'Digite os autores separados por virgula', 'required' => true
                   ], (object)[
                     'name' => 'published_date', 'label' => 'Data de Publicação', 'type' => 'text',
@@ -48,29 +51,29 @@
                     'name' => 'description', 'label' => 'Descrição', 'type' => 'text',
                     'placeholder' => 'Digite a descrição', 'required' => true
                   ], (object)[
-                    'name' => 'categories', 'label' => 'Categorias', 'type' => 'text',
+                    'name' => 'categories', 'label' => 'Categorias', 'type' => 'text', 'is_array' => true,
                     'placeholder' => 'Digite as categorias separadas por virgula', 'required' => false
                   ], (object)[
                     'name' => 'image', 'label' => 'Imagem', 'type' => 'url',
                     'placeholder' => 'Digite a url da imagem', 'required' => false
-                  ] 
+                  ]
                 ] as $field)
                   <div class="col-md-6">
-                    <label for="field-{{ $field->name }}">{{ $field->label }}</label>
+                    <label for="field-update-{{ $field->name }}">{{ $field->label }}</label>
                     <div class="input-group mb-3">
                       <input
                         type="{{ $field->type }}"
                         class="form-control"
-                        placeholder="{{ $field->placeholder }}"
+                        placeholder="{{ $field->label }}"
                         aria-label="{{ $field->label }}"
-                        id="field-{{ $field->name }}"
-                        name="{{ $field->name }}"
-                        required="{{ $field->required ? 'true': 'false' }}"
+                        id="field-update-{{ $field->name }}"
+                        v-model="{{ $field->name }}"
+                        name="{{ $field->name . (isset($field->is_array) ? '[]':'' )}}"
+                        {{ $field->required ? 'required':'' }}
                       />
                     </div>
                   </div>
                 @endforeach
-                <div class="col-md-6"></div>
                 <div class="col-md-6">
                   <label for="field-rf-id">RF-ID</label>
                   <div class="input-group mb-3">
@@ -107,7 +110,7 @@
                 </div>
               </div>
               <div class="text-center">
-                <button type="submit" class="btn btn-dark btn-lg btn-rounded w-100 mt-4">Cadastrar</button>
+                <button type="submit" class="btn btn-dark btn-lg btn-rounded w-100 mt-4">Atualizar</button>
                 <button
                   type="button"
                   class="btn btn-light btn-lg btn-rounded w-100 mb-2"
@@ -120,47 +123,51 @@
       </div>
     </div>
   </div>
+  
   @php if(!isset($isVueStarted)){ $isVueStarted = true; @endphp
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
   @php } @endphp  
   <script>
-    function completeWithISBN(){      
-      const isbn = document.getElementById('field-isbn').value;
+    let current_book = null;
+    function handleOpenEditBook(id){
+      const findedBook = books.find((book) => book.id === id);
+      if(!findedBook){
+        notify('error', 'Livro não encontrado');
+        return;
+      }
 
-      if(!isbn){
-        notify('danger', 'O ISBN é obrigatório para realizar a busca');
-        return;
-      }
-      if(isbn.length !== 10 && isbn.length !== 13){
-        notify('danger', 'ISBN inválido. Digite um valor válido');
-        return;
-      }
-      
-      const url = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`;
-      fetch(url).then((response) => response.json()).then(function (response) {
-        if(!response || !response.items || response.items.length === 0 || !response.items[0].volumeInfo){
-          notify('danger', 'Livro não encontrado');
-          return;
-        }
-        
-        const volumeInfo = response.items[0].volumeInfo;
-        if(volumeInfo?.title) document.getElementById('field-title').value = volumeInfo.title;
-        if(volumeInfo?.subtitle) document.getElementById('field-subtitle').value = volumeInfo.subtitle;
-        if(volumeInfo?.publishedDate) document.getElementById('field-published_date').value = volumeInfo.publishedDate;
-        if(volumeInfo?.description) document.getElementById('field-description').value = volumeInfo.description;
-        if(volumeInfo?.imageLinks?.thumbnail) document.getElementById('field-image').value = volumeInfo.imageLinks.thumbnail;
-        if(volumeInfo?.authors) document.getElementById('field-authors').value = volumeInfo.authors.join(',');
-        if(volumeInfo?.categories) document.getElementById('field-categories').value = volumeInfo.categories.join(',');
-      });
+      current_book = findedBook;
+      document.getElementById('openModalEditBook').click();
     }
 
-    const appAddBook = new Vue({
-      el: '#modalAddBook',
+    const app = new Vue({
+      el: '#modalEditBook',
       data: {
+        authors: [], categories: [],
+        isbn: '', title: '', subtitle: '',
+        published_date: '', description: '', image: '',
         curr_rf_id: '',
         rf_ids: []
       },
       methods: {
+        open: function(){
+          if(!current_book) return;
+
+          this.isbn = current_book.isbn;
+          this.title = current_book.title;
+          this.subtitle = current_book.subtitle;
+          this.authors = (current_book.authors ?? []).length > 0 ? current_book.authors[0].name:'';
+          this.published_date = current_book.published_date;
+          this.description = current_book.description;
+          this.categories = (current_book.categories ?? []).length > 0 ? current_book.categories[0].name:'';
+          this.image = current_book.image;
+          this.rf_ids = current_book.book_stocks ? current_book.book_stocks.map(stock => stock.rf_id) : [];
+
+          const update_url = `{{ substr(route('manage.book.update', ['id'=> '0']),0,-1) }}${current_book.id}`;
+          document.getElementById('form-modal-edit-book').action = update_url;
+          const delete_url = `{{ substr(route('manage.book.delete', ['id' => '0']),0,-1) }}${current_book.id}`;
+          document.getElementById('form-modal-delete-book').action = delete_url;
+        },
         addNewRfId: function(){
           if(!this.curr_rf_id){
             notify('danger', 'É obrigatório preencher o RF-ID')
@@ -179,7 +186,6 @@
           this.rf_ids = this.rf_ids.filter((id) => id !== rf_id)
         }
       }
-    });
-    
+    })
   </script>
 </div>

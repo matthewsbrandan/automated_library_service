@@ -5,15 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class BookAuthor extends Model
+class BookStock extends Model
 {
   use HasFactory;
-  public $timestamps = false;
+
   protected $fillable = [
-    'book_id', 'author_id'
+    'rf_id',
+    'book_id',
+    'transfer_id',
+    'status' // 'reserved', 'borrowed', 'available'
   ];
 
   public function book(){
     return $this->belongsTo(Book::class, 'book_id');
+  }
+  public function transfer(){
+    return $this->belongsTo(Transfer::class, 'transfer_id');
   }
 }

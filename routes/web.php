@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ManageBookController;
+use App\Http\Controllers\ManageReservationController;
+use App\Http\Controllers\ManageDevolutionController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
@@ -25,12 +28,42 @@ Route::middleware('auth')->group(function () {
     return redirect('/home');
   });
 
+  /** 
+    [ ] HOME VERSÃO ADMIN
+      - Deve ter o gráfico "Balances over time" com reservas + coletas
+      - Deve ter a tabela "Recent transactions" contendo as solicitações de coleta próximas, e as devoluções próximas e/ou vencidas
+      - Deve ter os quatro cards contendo as informações "Total de reservas pendentes" | "Reservas Vencidas" | "Livros emprestados" | "Devoluções em atraso"
+      - O o acordion e o último gráfico "Overview balance" devem ser removido
+  */ 
   Route::get('/home', [DashboardController::class, 'index'])->name('dashboard');
   
-  Route::get('/tables', function () {
-    return view('tables');
-  })->name('tables');
+  Route::name('manage.')->group(function (){
+    Route::name('book.')->group(function (){
+      Route::get('/gerenciar/livros', [ManageBookController::class, 'index'])->name('index');
+      // [ ] [GET | JSON] pagination
+      Route::post('/gerenciar/livros', [ManageBookController::class, 'store'])->name('store');
+      Route::put('/gerenciar/livros/{id}', [ManageBookController::class, 'update'])->name('update');
+      Route::delete('/gerenciar/livros/{id}', [ManageBookController::class, 'delete'])->name('delete');
+    });
+
+    Route::name('reservation.')->group(function (){
+      Route::get('/gerenciar/reservas', [ManageReservationController::class, 'index'])->name('index');
+      // [ ] [PUT | JSON] done
+      // [ ] [PUT | JSON] denied
+    });
+
+    Route::name('devolution.')->group(function (){
+      Route::get('/gerenciar/devolucoes', [ManageDevolutionController::class, 'index'])->name('index');
+    });
+  });
   
+  Route::name('reservation.')->group(function (){
+    Route::get('/reserva/solicitar/{book_id}', [ManageReservationController::class, 'requestReservation'])->name('request');
+    Route::get('/reserva/recusar/{book_id}', [ManageReservationController::class, 'refuseReservation'])->name('refuse');
+    Route::get('/reserva/separar/{transfer_id}/{rf_id}', [ManageReservationController::class, 'separateReservation'])->name('separate');
+    Route::get('/reserva/gerar-token-de-coleta/{rf_id}', [ManageReservationController::class, 'generateCollectToken'])->name('generate_token');
+  });
+
   Route::get('/wallet', function () {
     return view('wallet');
   })->name('wallet');
