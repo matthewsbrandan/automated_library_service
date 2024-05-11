@@ -109,10 +109,10 @@ class ManageReservationController extends Controller{
       'success'
     );
   }
-  public function generateCollectToken($rf_id){
-    $transfer = Transfer::whereUserId(auth()->user()->id)->whereRfId($rf_id)->first();
-    if(!$transfer) return response()->json([
-      'result' => false, 'response' => 'Reserva não encontrada'
+  public function generateCollectToken($transfer_id){
+    $transfer = Transfer::whereUserId(auth()->user()->id)->whereId($transfer_id)->first();
+    if(!$transfer || !$transfer->rf_id) return response()->json([
+      'result' => false, 'response' => 'Reserva não encontrada, ou livro ainda não separado'
     ]);
 
     if($transfer->token) return response()->json([
@@ -126,7 +126,7 @@ class ManageReservationController extends Controller{
     do{
       $token = null;
       if($counter >= 10) break;
-      $token = Str::random(6);
+      $token = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
       $counter++;
     }while(!!Transfer::whereStatus('reserved')->whereToken($token)->first());
 
@@ -166,7 +166,8 @@ class ManageReservationController extends Controller{
 
     $transfer->update([
       'expiration' => $expiration,
-      'status' => 'borrowed'
+      'status' => 'borrowed',
+      'token' => null
     ]);
     
     $transfer->book->update([

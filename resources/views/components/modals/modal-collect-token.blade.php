@@ -51,7 +51,7 @@
       el: '#modalCollectToken',
       data: {
         book: '',
-        rf_id: '',
+        transfer_id: '',
         token: undefined,
         error_message: undefined,
         status: 'without-token' // without-token | loading | error | with-token
@@ -63,7 +63,7 @@
           this.status = 'loading';
 
           try{
-            const res = await api.get(`{{ substr(route('reservation.generate_token',['rf_id' => 0]),0,-1) }}${this.rf_id}`);
+            const res = await api.get(`{{ substr(route('reservation.generate_token',['transfer_id' => 0]),0,-1) }}${this.transfer_id}`);
 
             if(res.result){
               this.status = 'with-token';
@@ -81,12 +81,12 @@
       }
     })
 
-    function handleOpenModalCollectToken({ token, book, rf_id }){
+    function handleOpenModalCollectToken({ token, book, transfer_id }){
       document.getElementById('btnCallModalCollectToken').click();
 
       appCollectToken.$data.token = token;
       appCollectToken.$data.book  = book;
-      appCollectToken.$data.rf_id = rf_id;
+      appCollectToken.$data.transfer_id = transfer_id;
       appCollectToken.$data.error_message = undefined;
       appCollectToken.$data.status = token ? 'with-token' : 'without-token';
     }

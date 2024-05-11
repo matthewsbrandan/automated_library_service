@@ -98,7 +98,7 @@
                             <button
                               type="button"
                               class="btn btn-sm btn-white btn-icon d-flex align-items-center ms-auto my-auto me-2"
-                              onclick="handleOpenModalCollectToken({ token: '{{ $transfer->token }}', book: '{{ $transfer->book->title }}', rf_id: '{{ $transfer->rf_id }}' })"
+                              onclick="handleOpenModalCollectToken({ token: '{{ $transfer->token }}', book: '{{ $transfer->book->title }}', transfer_id: '{{ $transfer->id }}' })"
                             >
                               <span class="btn-inner--icon">
                                 <span class="p-1 bg-success rounded-circle d-flex ms-auto me-2">
