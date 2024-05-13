@@ -78,7 +78,7 @@
                   <label for="field-rf-id">RF-ID</label>
                   <div class="input-group mb-3">
                     <input
-                      type="number"
+                      type="text"
                       class="form-control"
                       placeholder="Digite o RF-ID do livro"
                       aria-label="RF-ID"
