@@ -37,25 +37,24 @@
         <div class="col-lg-4 col-md-6 mb-md-0 mb-4">
           <div class="card shadow-xs border h-100">
             <div class="card-header pb-0">
-              <h6 class="font-weight-semibold text-lg mb-0">Reservas / Coletas</h6>
-              <p class="text-sm">Here you have details about the balance.</p>
+              <h6 class="font-weight-semibold text-lg mb-0">Coletas / Devoluções</h6>
+              <p class="text-sm">Somatória registrada nos últimos dias</p>
               <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                 <input type="radio" class="btn-check" name="btnradio" id="btnradio1"
                   autocomplete="off" checked>
-                <label class="btn btn-white px-3 mb-0" for="btnradio1">12 months</label>
+                <label class="btn btn-white px-3 mb-0" for="btnradio1">12 meses</label>
                 <input type="radio" class="btn-check" name="btnradio" id="btnradio2"
                   autocomplete="off">
-                <label class="btn btn-white px-3 mb-0" for="btnradio2">30 days</label>
+                <label class="btn btn-white px-3 mb-0" for="btnradio2">30 dias</label>
                 <input type="radio" class="btn-check" name="btnradio" id="btnradio3"
                   autocomplete="off">
-                <label class="btn btn-white px-3 mb-0" for="btnradio3">7 days</label>
+                <label class="btn btn-white px-3 mb-0" for="btnradio3">7 dias</label>
               </div>
             </div>
             <div class="card-body py-3">
               <div class="chart mb-2">
                 <canvas id="chart-bars" class="chart-canvas" height="240"></canvas>
               </div>
-              <button class="btn btn-white mb-0 ms-auto">View report</button>
             </div>
           </div>
         </div>
@@ -265,5 +264,97 @@
       <x-app.footer />
     </div>
   </main>
-
+  @php if(!isset($isChartStarted)){ $isChartStarted = true; @endphp
+    <script src="../assets/js/plugins/chartjs.min.js"></script>
+  @php } @endphp
+  <script>
+    var ctx = document.getElementById("chart-bars").getContext("2d");
+    if(ctx) new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: {!! json_encode(array_keys(get_object_vars($collectChart))) !!},
+        datasets: [{
+            label: "Coletas",
+            tension: 0.4,
+            borderWidth: 0,
+            borderSkipped: false,
+            backgroundColor: "#2ca8ff",
+            data: {!! json_encode(array_values(get_object_vars($collectChart))) !!},
+            maxBarThickness: 6
+          },
+          {
+            label: "Devoluções",
+            tension: 0.4,
+            borderWidth: 0,
+            borderSkipped: false,
+            backgroundColor: "#7c3aed",
+            data: {!! json_encode(array_values(get_object_vars($devolutionChart))) !!},
+            maxBarThickness: 6
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            backgroundColor: '#fff',
+            titleColor: '#1e293b',
+            bodyColor: '#1e293b',
+            borderColor: '#e9ecef',
+            borderWidth: 1,
+            usePointStyle: true
+          }
+        },
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        scales: {
+          y: {
+            stacked: true,
+            grid: {
+              drawBorder: false,
+              display: true,
+              drawOnChartArea: true,
+              drawTicks: false,
+              borderDash: [4, 4],
+            },
+            ticks: {
+              beginAtZero: true,
+              padding: 10,
+              font: {
+                size: 12,
+                family: "Noto Sans",
+                style: 'normal',
+                lineHeight: 2
+              },
+              color: "#64748B"
+            },
+          },
+          x: {
+            stacked: true,
+            grid: {
+              drawBorder: false,
+              display: false,
+              drawOnChartArea: false,
+              drawTicks: false
+            },
+            ticks: {
+              font: {
+                size: 12,
+                family: "Noto Sans",
+                style: 'normal',
+                lineHeight: 2
+              },
+              color: "#64748B"
+            },
+          },
+        },
+      },
+    });
+  </script>
 </x-app-layout>

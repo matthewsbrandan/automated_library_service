@@ -32,10 +32,14 @@ class Transfer extends Model
     return $this->hasOne(BookStock::class, 'transfer_id');
   }
 
+  public function Expiration(){
+    if(!$this->expiration) return null;
+    return Carbon::parse($this->expiration);
+  }
   public function getExpiration(){
     if(!$this->expiration) return '';
 
-    $carbonDate = Carbon::parse($this->expiration);
+    $carbonDate = $this->Expiration();
     return $carbonDate->format('d/m/Y H:i');
   }
 }
