@@ -179,7 +179,8 @@ class ManageBookController extends Controller{
       if(!$stock) BookStock::create([
         'rf_id' => $rf_id,
         'book_id' => $book_id,
-        'status' => 'available'
+        'status' => 'available',
+        'transfer_id' => 0
       ]);
       else if($stock->book_id !== $book_id) return (object)[
         'result' => false,
