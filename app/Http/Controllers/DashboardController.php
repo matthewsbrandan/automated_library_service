@@ -38,8 +38,14 @@ class DashboardController extends Controller{
     $transfers = Transfer::whereIn('status', ['reserved', 'borrowed', 'expired'])->whereFinished(false)->get();
 
     [$collectChart, $devolutionChart] = $this->getDataChart();
+    $analytics = $this->getAnalytics();
 
-    return view('dashboard.admin', ['transfers' => $transfers, 'collectChart' => $collectChart, 'devolutionChart' => $devolutionChart]);
+    return view('dashboard.admin', [
+      'transfers' => $transfers,
+      'collectChart' => $collectChart,
+      'devolutionChart' => $devolutionChart,
+      'analytics' => $analytics
+    ]);
   }
   private function indexReader(){
     $allTransfers = $this->getCurrentTransfers();    
@@ -102,6 +108,14 @@ class DashboardController extends Controller{
     }
 
     return [$collectChart, $devolutionChart];
+  }
+  private function getAnalytics(){
+    return (object)[
+      'pendingReservations'  => Transfer::whereStatus('requested')->count(),
+      'expiratedCollects'    => Transfer::whereStatus('reserved')->whereDate('created_at', '<', Carbon::now())->count(),
+      'borroweds'            => Transfer::whereIn('status', ['borrowed', 'expired'])->count(),
+      'expiratedDevolutions' => Transfer::whereStatus('expired')->count(),
+    ];
   }
   private function getCurrentTransfers(){
     return Transfer::whereUserId(auth()->user()->id)->whereFinished(false)->get();

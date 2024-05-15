@@ -140,7 +140,7 @@
           </div>
         </div>
       </div>
-      {{-- <div class="row">
+      <div class="row">
         <div class="col-xl-3 col-sm-6 mb-xl-0">
           <div class="card border shadow-xs mb-4">
             <div class="card-body text-start p-3 w-100">
@@ -158,13 +158,7 @@
                 <div class="col-12">
                   <div class="w-100">
                     <p class="text-sm text-secondary mb-1">Total de reservas pendentes</p>
-                    <h4 class="mb-2 font-weight-bold">$99,118.5</h4>
-                    <div class="d-flex align-items-center">
-                      <span class="text-sm text-success font-weight-bolder">
-                        <i class="fa fa-chevron-up text-xs me-1"></i>10.5%
-                      </span>
-                      <span class="text-sm ms-1">from $89,740.00</span>
-                    </div>
+                    <h4 class="mb-2 font-weight-bold">{{ $analytics->pendingReservations }}</h4>
                   </div>
                 </div>
               </div>
@@ -188,14 +182,8 @@
               <div class="row">
                 <div class="col-12">
                   <div class="w-100">
-                    <p class="text-sm text-secondary mb-1">Reservas Vencidas</p>
-                    <h4 class="mb-2 font-weight-bold">376</h4>
-                    <div class="d-flex align-items-center">
-                      <span class="text-sm text-success font-weight-bolder">
-                        <i class="fa fa-chevron-up text-xs me-1"></i>55%
-                      </span>
-                      <span class="text-sm ms-1">from 243</span>
-                    </div>
+                    <p class="text-sm text-secondary mb-1">Coletas Vencidas</p>
+                    <h4 class="mb-2 font-weight-bold">{{ $analytics->expiratedCollects }}</h4>
                   </div>
                 </div>
               </div>
@@ -218,13 +206,7 @@
                 <div class="col-12">
                   <div class="w-100">
                     <p class="text-sm text-secondary mb-1">Livros emprestados</p>
-                    <h4 class="mb-2 font-weight-bold">$450.53</h4>
-                    <div class="d-flex align-items-center">
-                      <span class="text-sm text-success font-weight-bolder">
-                        <i class="fa fa-chevron-up text-xs me-1"></i>22%
-                      </span>
-                      <span class="text-sm ms-1">from $369.30</span>
-                    </div>
+                    <h4 class="mb-2 font-weight-bold">{{ $analytics->borroweds }}</h4>
                   </div>
                 </div>
               </div>
@@ -247,20 +229,14 @@
                 <div class="col-12">
                   <div class="w-100">
                     <p class="text-sm text-secondary mb-1">Devoluções em atraso</p>
-                    <h4 class="mb-2 font-weight-bold">$23,364.55</h4>
-                    <div class="d-flex align-items-center">
-                      <span class="text-sm text-success font-weight-bolder">
-                        <i class="fa fa-chevron-up text-xs me-1"></i>18%
-                      </span>
-                      <span class="text-sm ms-1">from $19,800.40</span>
-                    </div>
+                    <h4 class="mb-2 font-weight-bold">{{ $analytics->expiratedDevolutions }}</h4>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div> --}}
+      </div>
       <x-app.footer />
     </div>
   </main>
