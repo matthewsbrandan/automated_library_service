@@ -3,17 +3,19 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb bg-transparent mb-1 pb-0 pt-1 px-0 me-sm-6 me-5">
         <li class="breadcrumb-item text-sm">
-          <a class="opacity-5 text-dark" href="{{ route('dashboard') }}">Home</a>
+          <a class="opacity-5 {{ is_current_route('book.index') ? 'text-white':'text-dark' }}" href="{{ route('dashboard') }}">Home</a>
         </li>
-        <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
+        <li class="breadcrumb-item text-sm {{ is_current_route('book.index') ? 'text-white opacity-9':'text-dark' }} active" aria-current="page">
           @if(is_current_route('dashboard')) Home
+          @elseif(is_current_route('book.index')) Livros
           @elseif(is_current_route('manage.book.index')) Gerenciar Livros
           @elseif(is_current_route('manage.reservation.index')) Gerenciar Reservas
           @elseif(is_current_route('manage.devolution.index')) Gerenciar Devoluções @endif
         </li>
       </ol>
-      <h6 class="font-weight-bold mb-0">
+      <h6 class="font-weight-bold mb-0 {{ is_current_route('book.index') ? 'text-white opacity-9':'' }}">
         @if(is_current_route('dashboard')) Home
+        @elseif(is_current_route('book.index')) Livros
         @elseif(is_current_route('manage.book.index')) Gerenciar Livros
         @elseif(is_current_route('manage.reservation.index')) Gerenciar Reservas
         @elseif(is_current_route('manage.devolution.index')) Gerenciar Devoluções @endif
@@ -39,9 +41,9 @@
         <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
           <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
             <div class="sidenav-toggler-inner">
-              <i class="sidenav-toggler-line"></i>
-              <i class="sidenav-toggler-line"></i>
-              <i class="sidenav-toggler-line"></i>
+              <i class="sidenav-toggler-line {{ is_current_route('book.index') ? 'bg-white':'' }}"></i>
+              <i class="sidenav-toggler-line {{ is_current_route('book.index') ? 'bg-white':'' }}"></i>
+              <i class="sidenav-toggler-line {{ is_current_route('book.index') ? 'bg-white':'' }}"></i>
             </div>
           </a>
         </li>

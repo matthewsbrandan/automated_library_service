@@ -1,7 +1,8 @@
 <x-app-layout>
-
   <main class="main-content h-100">
-    <div class="pt-5 pb-6 bg-cover" style="background-image: url('../assets/img/header-blue-purple.jpg')"></div>
+    <div class="pb-6 bg-cover text-white" style="background-image: url('../assets/img/header-blue-purple.jpg')">
+      <x-app.navbar />
+    </div>
     <div class="container my-3 py-3">
       <div class="row mt-n6 mb-6">
         @foreach($books as $book)        
