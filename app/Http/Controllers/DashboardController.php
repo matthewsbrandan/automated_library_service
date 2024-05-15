@@ -13,6 +13,27 @@ class DashboardController extends Controller{
     
     return $this->indexReader();
   }
+  public function book(){
+    $books = Book::take(20)->inRandomOrder()->get();
+    $transfers = $this->getCurrentTransfers();
+
+    if($transfers->count() > 0){
+      foreach($books as $book){
+        $book->status = null;
+
+        foreach($transfers as $transfer){
+          if($book->id === $transfer->book_id){
+            $book->status = in_array($transfer->status, ['requested','reserved']) ? 'Reservado' : 'Emprestado';
+            break;
+          }
+        }
+
+        if(!$book->status && $book->available <= 0) $book->status = 'Sem estoque disponível';
+      }
+    }
+    
+    return view('book', ['books' => $books]);
+  }
   private function indexAdmin(){
     $transfers = Transfer::whereIn('status', ['reserved', 'borrowed', 'expired'])->whereFinished(false)->get();
 
@@ -21,8 +42,11 @@ class DashboardController extends Controller{
     return view('dashboard.admin', ['transfers' => $transfers, 'collectChart' => $collectChart, 'devolutionChart' => $devolutionChart]);
   }
   private function indexReader(){
-    $book_suggestions = Book::where('available','>', 0)->take(6)->inRandomOrder()->get();
-    $allTransfers = Transfer::whereUserId(auth()->user()->id)->whereFinished(false)->get();
+    $allTransfers = $this->getCurrentTransfers();    
+    $book_ids = $allTransfers->map(function($transfer){ return $transfer->book_id; })->toArray();
+
+    $book_suggestions = Book::whereNotIn('id', $book_ids)->where('available','>', 0)->take(6)->inRandomOrder()->get();
+
     $transfers = collect([]);
     $reservations = collect([]);
 
@@ -78,5 +102,8 @@ class DashboardController extends Controller{
     }
 
     return [$collectChart, $devolutionChart];
+  }
+  private function getCurrentTransfers(){
+    return Transfer::whereUserId(auth()->user()->id)->whereFinished(false)->get();
   }
 }

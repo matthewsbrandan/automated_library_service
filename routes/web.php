@@ -28,14 +28,8 @@ Route::middleware('auth')->group(function () {
     return redirect('/home');
   });
 
-  /** 
-    [ ] HOME VERSÃO ADMIN
-      - Deve ter o gráfico "Balances over time" com reservas + coletas
-      - Deve ter a tabela "Recent transactions" contendo as solicitações de coleta próximas, e as devoluções próximas e/ou vencidas
-      - Deve ter os quatro cards contendo as informações "Total de reservas pendentes" | "Reservas Vencidas" | "Livros emprestados" | "Devoluções em atraso"
-      - O o acordion e o último gráfico "Overview balance" devem ser removido
-  */ 
-  Route::get('/home', [DashboardController::class, 'index'])->name('dashboard');
+  Route::get('/home',   [DashboardController::class, 'index'])->name('dashboard');
+  Route::get('/livros', [DashboardController::class, 'book'])->name('book.index');
   
   Route::name('manage.')->group(function (){
     Route::name('book.')->group(function (){
@@ -67,10 +61,6 @@ Route::middleware('auth')->group(function () {
   Route::get('/wallet', function () {
     return view('wallet');
   })->name('wallet');
-
-  Route::get('/RTL', function () {
-    return view('RTL');
-  })->name('RTL');
   
   Route::get('/profile', function () {
     return view('account-pages.profile');
