@@ -127,14 +127,14 @@
                   <h6 class="font-weight-semibold text-lg mb-0">Livros Emprestados</h6>
                   <p class="text-sm mb-sm-0 mb-2">Este são os livros que estão em sua posse</p>
                 </div>
-                <div>
+                {{-- <div>
                   <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                     <input type="radio" class="btn-check" name="btnradiotable" id="btnradiotable1" autocomplete="off" checked>
                     <label class="btn btn-white px-3 mb-0" for="btnradiotable1">Todos</label>
                     <input type="radio" class="btn-check" name="btnradiotable" id="btnradiotable2" autocomplete="off">
                     <label class="btn btn-white px-3 mb-0" for="btnradiotable2">Vencidos</label>
                   </div>
-                </div>
+                </div> --}}
               </div>
             </div>
             <div class="card-body px-0 py-0">

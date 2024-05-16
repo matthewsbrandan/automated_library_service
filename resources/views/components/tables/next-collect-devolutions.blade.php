@@ -59,7 +59,15 @@
             </tr>
           @endif
           @foreach($transfers as $transfer)
-            <tr v-if="(filter === 'all' || (filter === 'collects' && '{{ $transfer->status }}' === 'reserved') || (filter === 'devolutions' && ['borrowed','expired'].includes('{{ $transfer->status }}'))) && (!search || '{{ $transfer->book->title }}'.toLowerCase().includes(search.toLowerCase())) ">
+            <tr v-if="(
+              filter === 'all' || (
+                filter === 'collects' && '{{ $transfer->status }}' === 'reserved'
+              ) || (
+                filter === 'devolutions' && ['borrowed','expired'].includes('{{ $transfer->status }}')
+              )
+            ) && (
+              !search || '{{ $transfer->book->title }}'.toLowerCase().includes(search.toLowerCase())
+            )">
               <td>
                 <div class="d-flex px-2">
                   <div class="avatar avatar-sm rounded-md bg-gray-100 me-2 my-2">
