@@ -3,7 +3,7 @@
     <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
       aria-hidden="true" id="iconSidenav"></i>
     <a class="navbar-brand d-flex align-items-center m-0"
-      href=" https://demos.creative-tim.com/corporate-ui-dashboard/pages/dashboard.html " target="_blank">
+      href="{{ route('dashboard') }}" target="_blank">
       <span class="font-weight-bold text-lg">{{ Config::get('app.name') }}</span>
     </a>
   </div>
